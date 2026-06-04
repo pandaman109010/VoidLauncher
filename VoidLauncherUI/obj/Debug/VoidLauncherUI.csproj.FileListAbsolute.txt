@@ -1,0 +1,10 @@
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\bin\Debug\VoidLauncherUI.exe.config
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\bin\Debug\VoidLauncherUI.exe
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\bin\Debug\VoidLauncherUI.pdb
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.csproj.AssemblyReference.cache
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.Form1.resources
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.Properties.Resources.resources
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.csproj.GenerateResource.cache
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.csproj.CoreCompileInputs.cache
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.exe
+C:\Users\Jimmy\OneDrive - KingsWay School\DGT\t12 dgtr\T2\void launcher\VoidLauncherUI\obj\Debug\VoidLauncherUI.pdb
