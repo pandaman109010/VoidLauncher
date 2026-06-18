@@ -1,0 +1,72 @@
+{
+  "global-settings": {
+    "minimize-to-tray": {
+      "enabled": true
+    },
+    "run-at-startup": {
+      "enabled": false
+    }
+  },
+  "personalities": [
+    {
+      "name": "Study",
+      "enabled": true,
+      "trigger-shortcut": "ctrl+alt+s",
+      "apps-to-launch": {
+        "enabled": true,
+        "paths": "C:\\Program Files\\Code.exe, C:\\Program Files\\Anki\\anki.exe"
+      },
+      "tabs-to-open": {
+        "enabled": true,
+        "urls": "https://github.com, https://trello.com"
+      },
+      "system-settings-automation": {
+        "enabled": true,
+        "volume-level": 20,
+        "do-not-disturb": true
+      },
+      "wallpaper-switch": {
+        "enabled": true,
+        "wallpaper-path": "D:\\backgrounds\\study.jpg"
+      },
+      "virtual-desktop-switch": {
+        "enabled": false,
+        "target-desktop-name": "Study-Zone"
+      }
+    },
+    {
+      "name": "Gaming",
+      "enabled": true,
+      "trigger-shortcut": "ctrl+alt+g",
+      "apps-to-launch": {
+        "enabled": true,
+        "paths": "C:\\Program Files (x86)\\Steam\\steam.exe"
+      },
+      "tabs-to-open": {
+        "enabled": false,
+        "urls": ""
+      },
+      "system-settings-automation": {
+        "enabled": true,
+        "volume-level": 70,
+        "do-not-disturb": true
+      },
+      "wallpaper-switch": {
+        "enabled": true,
+        "wallpaper-path": "D:\\backgrounds\\gaming.jpg"
+      },
+      "virtual-desktop-switch": {
+        "enabled": true,
+        "target-desktop-name": "Gaming-Zone"
+      }
+    }
+  ],
+  "feature-ram-monitor": {
+    "enabled": true,
+    "max-allowed-percentage": 85
+  },
+  "feature-smart-suggestions": {
+    "enabled": true,
+    "scan-interval-minutes": 5
+  }
+}

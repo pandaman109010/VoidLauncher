@@ -1,14 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\",
+  "WorkspaceRootPath": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{30927A65-D9B1-4B11-AD08-F030A939446E}|VoidLauncherUI.csproj|c:\\users\\jimmy\\onedrive - kingsway school\\dgt\\t12 dgtr\\t2\\void launcher\\voidlauncherui\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{30927A65-D9B1-4B11-AD08-F030A939446E}|VoidLauncherUI.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|c:\\users\\jimmy\\onedrive - kingsway school\\dgt\\t12 dgtr\\t2\\void launcher\\voidlauncher\\voidlauncherui\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{30927A65-D9B1-4B11-AD08-F030A939446E}|VoidLauncherUI.csproj|C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{30927A65-D9B1-4B11-AD08-F030A939446E}|VoidLauncherUI.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|VoidLauncherUI||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|c:\\users\\jimmy\\onedrive - kingsway school\\dgt\\t12 dgtr\\t2\\void launcher\\voidlauncher\\voidlauncherui\\properties\\resources.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
+      "RelativeMoniker": "D:0:0:{FAD727B1-44F1-4E15-ACB2-0D07B4E3F24B}|VoidLauncherUI.csproj|solutionrelative:properties\\resources.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,31 +29,59 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.cs",
+              "RelativeToolTip": "Form1.cs",
+              "ViewState": "AgIAAPIAAAAAAAAAAAAkwPoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-17T00:58:05.297Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\Form1.cs",
+              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\Form1.cs [Design]",
+              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.cs [Design]",
               "RelativeToolTip": "Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T02:17:23.614Z",
+              "WhenOpened": "2026-06-17T00:55:47.691Z",
+              "IsPinned": true,
               "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\void launcher\\VoidLauncherUI\\Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\Form1.Designer.cs",
               "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAIIAAAAAAAAAAADwv5oAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T02:16:46.3Z"
+              "WhenOpened": "2026-06-17T12:23:19.055Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "VoidLauncherUI",
+              "DocumentMoniker": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\VoidLauncherUI.csproj",
+              "RelativeDocumentMoniker": "VoidLauncherUI.csproj",
+              "ToolTip": "C:\\Users\\Jimmy\\OneDrive - KingsWay School\\DGT\\t12 dgtr\\T2\\Void Launcher\\VoidLauncher\\VoidLauncherUI\\VoidLauncherUI.csproj",
+              "RelativeToolTip": "VoidLauncherUI.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-06-17T01:03:45.103Z",
+              "EditorCaption": ""
             }
           ]
         }
