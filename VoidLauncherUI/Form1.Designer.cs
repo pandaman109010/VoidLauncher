@@ -44,10 +44,11 @@
             this.personalaty_settings = new System.Windows.Forms.Panel();
             this.personalaty_setings = new System.Windows.Forms.TableLayoutPanel();
             this.menu_show_personalatys_and_buttons = new System.Windows.Forms.Panel();
-            this.add_deleate_personalaty = new System.Windows.Forms.FlowLayoutPanel();
-            this.add_personalaty = new System.Windows.Forms.Button();
-            this.del_personalaty = new System.Windows.Forms.Button();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.all_personalatys = new System.Windows.Forms.ListBox();
+            this.del_personalaty = new System.Windows.Forms.Button();
+            this.add_personalaty = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.menu_personalaty_settings = new System.Windows.Forms.TableLayoutPanel();
             this.personalaty_name_feld = new System.Windows.Forms.TextBox();
             this.personalaty_on_heading = new System.Windows.Forms.Label();
@@ -61,7 +62,7 @@
             this.enable_personalaty = new System.Windows.Forms.CheckBox();
             this.name_heading = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.Trigger_feald_personalaty = new System.Windows.Forms.TextBox();
             this.list_aplications_personalaty = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.remove_app_personalaty = new System.Windows.Forms.Button();
@@ -71,6 +72,14 @@
             this.add_link_personalaty = new System.Windows.Forms.Button();
             this.personalaty_web_feald = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.main_content_container = new System.Windows.Forms.Panel();
+            this.automation_settings = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.visual_settings = new System.Windows.Forms.Panel();
+            this.sys_settings = new System.Windows.Forms.Panel();
+            this.support_settings = new System.Windows.Forms.Panel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.menu_selecter_pannel.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.menu_button_table.SuspendLayout();
@@ -79,10 +88,14 @@
             this.personalaty_settings.SuspendLayout();
             this.personalaty_setings.SuspendLayout();
             this.menu_show_personalatys_and_buttons.SuspendLayout();
-            this.add_deleate_personalaty.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
             this.menu_personalaty_settings.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.main_content_container.SuspendLayout();
+            this.automation_settings.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            this.visual_settings.SuspendLayout();
             this.SuspendLayout();
             // 
             // menu_selecter_pannel
@@ -171,6 +184,7 @@
             this.suport_button.Text = "       Support";
             this.suport_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.suport_button.UseVisualStyleBackColor = true;
+            this.suport_button.Click += new System.EventHandler(this.suport_button_Click);
             // 
             // sys_button
             // 
@@ -189,6 +203,7 @@
             this.sys_button.Text = " Sys Settings";
             this.sys_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.sys_button.UseVisualStyleBackColor = true;
+            this.sys_button.Click += new System.EventHandler(this.sys_button_Click);
             // 
             // visual_button
             // 
@@ -207,6 +222,7 @@
             this.visual_button.Text = "  Visual Cues";
             this.visual_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.visual_button.UseVisualStyleBackColor = true;
+            this.visual_button.Click += new System.EventHandler(this.visual_button_Click);
             // 
             // auto_button
             // 
@@ -225,6 +241,7 @@
             this.auto_button.Text = "  Automation";
             this.auto_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.auto_button.UseVisualStyleBackColor = true;
+            this.auto_button.Click += new System.EventHandler(this.auto_button_Click);
             // 
             // personalaty_button
             // 
@@ -243,6 +260,7 @@
             this.personalaty_button.Text = "Personalities";
             this.personalaty_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.personalaty_button.UseVisualStyleBackColor = true;
+            this.personalaty_button.Click += new System.EventHandler(this.personalaty_button_Click);
             // 
             // title
             // 
@@ -299,7 +317,7 @@
             this.personalaty_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
             this.personalaty_settings.Controls.Add(this.personalaty_setings);
             this.personalaty_settings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.personalaty_settings.Location = new System.Drawing.Point(165, 0);
+            this.personalaty_settings.Location = new System.Drawing.Point(0, 0);
             this.personalaty_settings.Margin = new System.Windows.Forms.Padding(2);
             this.personalaty_settings.Name = "personalaty_settings";
             this.personalaty_settings.Size = new System.Drawing.Size(543, 356);
@@ -320,13 +338,13 @@
             this.personalaty_setings.Padding = new System.Windows.Forms.Padding(13);
             this.personalaty_setings.RowCount = 1;
             this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.personalaty_setings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
             this.personalaty_setings.Size = new System.Drawing.Size(543, 356);
             this.personalaty_setings.TabIndex = 0;
             this.personalaty_setings.Paint += new System.Windows.Forms.PaintEventHandler(this.personalaty_setings_Paint);
@@ -334,8 +352,7 @@
             // menu_show_personalatys_and_buttons
             // 
             this.menu_show_personalatys_and_buttons.AccessibleName = "menu show personalatys and buttons";
-            this.menu_show_personalatys_and_buttons.Controls.Add(this.add_deleate_personalaty);
-            this.menu_show_personalatys_and_buttons.Controls.Add(this.all_personalatys);
+            this.menu_show_personalatys_and_buttons.Controls.Add(this.tableLayoutPanel4);
             this.menu_show_personalatys_and_buttons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.menu_show_personalatys_and_buttons.Location = new System.Drawing.Point(15, 15);
             this.menu_show_personalatys_and_buttons.Margin = new System.Windows.Forms.Padding(2);
@@ -343,60 +360,84 @@
             this.menu_show_personalatys_and_buttons.Size = new System.Drawing.Size(151, 326);
             this.menu_show_personalatys_and_buttons.TabIndex = 0;
             // 
-            // add_deleate_personalaty
+            // tableLayoutPanel4
             // 
-            this.add_deleate_personalaty.AccessibleDescription = "the pannel that holds the add and deleate buttons for personalaty";
-            this.add_deleate_personalaty.AccessibleName = "add deleat personalaty";
-            this.add_deleate_personalaty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(8)))), ((int)(((byte)(53)))));
-            this.add_deleate_personalaty.Controls.Add(this.add_personalaty);
-            this.add_deleate_personalaty.Controls.Add(this.del_personalaty);
-            this.add_deleate_personalaty.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.add_deleate_personalaty.Location = new System.Drawing.Point(0, 292);
-            this.add_deleate_personalaty.Margin = new System.Windows.Forms.Padding(2);
-            this.add_deleate_personalaty.Name = "add_deleate_personalaty";
-            this.add_deleate_personalaty.Size = new System.Drawing.Size(151, 34);
-            this.add_deleate_personalaty.TabIndex = 1;
-            // 
-            // add_personalaty
-            // 
-            this.add_personalaty.AccessibleDescription = "";
-            this.add_personalaty.AccessibleName = "add personalaty";
-            this.add_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.add_personalaty.ForeColor = System.Drawing.Color.White;
-            this.add_personalaty.Location = new System.Drawing.Point(2, 2);
-            this.add_personalaty.Margin = new System.Windows.Forms.Padding(2);
-            this.add_personalaty.Name = "add_personalaty";
-            this.add_personalaty.Size = new System.Drawing.Size(59, 31);
-            this.add_personalaty.TabIndex = 0;
-            this.add_personalaty.Text = "Add";
-            this.add_personalaty.UseVisualStyleBackColor = true;
-            // 
-            // del_personalaty
-            // 
-            this.del_personalaty.AccessibleName = "del personalaty";
-            this.del_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.del_personalaty.ForeColor = System.Drawing.Color.White;
-            this.del_personalaty.Location = new System.Drawing.Point(65, 2);
-            this.del_personalaty.Margin = new System.Windows.Forms.Padding(2);
-            this.del_personalaty.Name = "del_personalaty";
-            this.del_personalaty.Size = new System.Drawing.Size(67, 31);
-            this.del_personalaty.TabIndex = 1;
-            this.del_personalaty.Text = "Delete";
-            this.del_personalaty.UseVisualStyleBackColor = true;
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Controls.Add(this.del_personalaty, 1, 2);
+            this.tableLayoutPanel4.Controls.Add(this.add_personalaty, 0, 2);
+            this.tableLayoutPanel4.Controls.Add(this.all_personalatys, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 3;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(151, 326);
+            this.tableLayoutPanel4.TabIndex = 2;
             // 
             // all_personalatys
             // 
             this.all_personalatys.AccessibleName = "all personalatys";
             this.all_personalatys.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(59)))), ((int)(((byte)(115)))));
+            this.tableLayoutPanel4.SetColumnSpan(this.all_personalatys, 2);
             this.all_personalatys.Dock = System.Windows.Forms.DockStyle.Fill;
             this.all_personalatys.ForeColor = System.Drawing.Color.White;
             this.all_personalatys.FormattingEnabled = true;
-            this.all_personalatys.Location = new System.Drawing.Point(0, 0);
+            this.all_personalatys.Location = new System.Drawing.Point(2, 34);
             this.all_personalatys.Margin = new System.Windows.Forms.Padding(2);
             this.all_personalatys.Name = "all_personalatys";
-            this.all_personalatys.Size = new System.Drawing.Size(151, 326);
+            this.all_personalatys.Size = new System.Drawing.Size(147, 256);
             this.all_personalatys.TabIndex = 0;
             this.all_personalatys.SelectedIndexChanged += new System.EventHandler(this.all_personalatys_SelectedIndexChanged);
+            // 
+            // del_personalaty
+            // 
+            this.del_personalaty.AccessibleName = "del personalaty";
+            this.del_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.del_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.del_personalaty.ForeColor = System.Drawing.Color.White;
+            this.del_personalaty.Location = new System.Drawing.Point(77, 294);
+            this.del_personalaty.Margin = new System.Windows.Forms.Padding(2);
+            this.del_personalaty.Name = "del_personalaty";
+            this.del_personalaty.Size = new System.Drawing.Size(72, 30);
+            this.del_personalaty.TabIndex = 1;
+            this.del_personalaty.Text = "Delete";
+            this.del_personalaty.UseVisualStyleBackColor = true;
+            this.del_personalaty.Click += new System.EventHandler(this.del_personalaty_Click);
+            // 
+            // add_personalaty
+            // 
+            this.add_personalaty.AccessibleDescription = "";
+            this.add_personalaty.AccessibleName = "add personalaty";
+            this.add_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.add_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.add_personalaty.ForeColor = System.Drawing.Color.White;
+            this.add_personalaty.Location = new System.Drawing.Point(2, 294);
+            this.add_personalaty.Margin = new System.Windows.Forms.Padding(2);
+            this.add_personalaty.Name = "add_personalaty";
+            this.add_personalaty.Size = new System.Drawing.Size(71, 30);
+            this.add_personalaty.TabIndex = 0;
+            this.add_personalaty.Text = "Add";
+            this.add_personalaty.UseVisualStyleBackColor = true;
+            this.add_personalaty.Click += new System.EventHandler(this.add_personalaty_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.tableLayoutPanel4.SetColumnSpan(this.label3, 2);
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(145, 32);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Personalities";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // menu_personalaty_settings
             // 
@@ -416,7 +457,7 @@
             this.menu_personalaty_settings.Controls.Add(this.enable_personalaty, 0, 11);
             this.menu_personalaty_settings.Controls.Add(this.name_heading, 0, 0);
             this.menu_personalaty_settings.Controls.Add(this.label1, 0, 7);
-            this.menu_personalaty_settings.Controls.Add(this.textBox2, 1, 7);
+            this.menu_personalaty_settings.Controls.Add(this.Trigger_feald_personalaty, 1, 7);
             this.menu_personalaty_settings.Controls.Add(this.list_aplications_personalaty, 0, 3);
             this.menu_personalaty_settings.Controls.Add(this.tableLayoutPanel1, 1, 3);
             this.menu_personalaty_settings.Controls.Add(this.tableLayoutPanel2, 1, 5);
@@ -425,19 +466,18 @@
             this.menu_personalaty_settings.Margin = new System.Windows.Forms.Padding(2);
             this.menu_personalaty_settings.Name = "menu_personalaty_settings";
             this.menu_personalaty_settings.RowCount = 12;
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.5F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6F));
-            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.679754F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.11933F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.11933F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.679754F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.719784F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.987041F));
+            this.menu_personalaty_settings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.759816F));
             this.menu_personalaty_settings.Size = new System.Drawing.Size(358, 326);
             this.menu_personalaty_settings.TabIndex = 1;
             this.menu_personalaty_settings.Paint += new System.Windows.Forms.PaintEventHandler(this.menu_personalaty_settings_Paint);
@@ -448,10 +488,9 @@
             this.personalaty_name_feld.AccessibleName = "personalaty name feld";
             this.personalaty_name_feld.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(40)))), ((int)(((byte)(77)))));
             this.personalaty_name_feld.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.personalaty_name_feld.Dock = System.Windows.Forms.DockStyle.Fill;
             this.personalaty_name_feld.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.personalaty_name_feld.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.personalaty_name_feld.Location = new System.Drawing.Point(184, 19);
+            this.personalaty_name_feld.Location = new System.Drawing.Point(184, 21);
             this.personalaty_name_feld.Margin = new System.Windows.Forms.Padding(5);
             this.personalaty_name_feld.Name = "personalaty_name_feld";
             this.personalaty_name_feld.Size = new System.Drawing.Size(169, 17);
@@ -463,12 +502,12 @@
             this.personalaty_on_heading.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.personalaty_on_heading, 2);
             this.personalaty_on_heading.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.personalaty_on_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.personalaty_on_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.personalaty_on_heading.ForeColor = System.Drawing.Color.White;
-            this.personalaty_on_heading.Location = new System.Drawing.Point(2, 286);
+            this.personalaty_on_heading.Location = new System.Drawing.Point(2, 287);
             this.personalaty_on_heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.personalaty_on_heading.Name = "personalaty_on_heading";
-            this.personalaty_on_heading.Size = new System.Drawing.Size(354, 14);
+            this.personalaty_on_heading.Size = new System.Drawing.Size(354, 16);
             this.personalaty_on_heading.TabIndex = 70;
             this.personalaty_on_heading.Text = "*enable the personalaty*";
             this.personalaty_on_heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -479,12 +518,12 @@
             this.vtrl_env_heading.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.vtrl_env_heading, 2);
             this.vtrl_env_heading.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.vtrl_env_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.vtrl_env_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.vtrl_env_heading.ForeColor = System.Drawing.Color.White;
             this.vtrl_env_heading.Location = new System.Drawing.Point(2, 250);
             this.vtrl_env_heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.vtrl_env_heading.Name = "vtrl_env_heading";
-            this.vtrl_env_heading.Size = new System.Drawing.Size(354, 14);
+            this.vtrl_env_heading.Size = new System.Drawing.Size(354, 16);
             this.vtrl_env_heading.TabIndex = 69;
             this.vtrl_env_heading.Text = "*enable virtual invirement* (for more advanced users)\r\n";
             this.vtrl_env_heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -495,12 +534,12 @@
             this.label5.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.label5, 2);
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(2, 210);
+            this.label5.Location = new System.Drawing.Point(2, 209);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(354, 14);
+            this.label5.Size = new System.Drawing.Size(354, 16);
             this.label5.TabIndex = 68;
             this.label5.Text = "*shortkey to run personalaty* (eg: shift-ctrl-d)\r\n";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -512,10 +551,10 @@
             this.list_websites_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.list_websites_personalaty.ForeColor = System.Drawing.Color.White;
             this.list_websites_personalaty.FormattingEnabled = true;
-            this.list_websites_personalaty.Location = new System.Drawing.Point(2, 141);
+            this.list_websites_personalaty.Location = new System.Drawing.Point(2, 143);
             this.list_websites_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.list_websites_personalaty.Name = "list_websites_personalaty";
-            this.list_websites_personalaty.Size = new System.Drawing.Size(175, 67);
+            this.list_websites_personalaty.Size = new System.Drawing.Size(175, 64);
             this.list_websites_personalaty.TabIndex = 66;
             // 
             // tabs_heading
@@ -524,12 +563,12 @@
             this.tabs_heading.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.tabs_heading, 2);
             this.tabs_heading.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabs_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.tabs_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.tabs_heading.ForeColor = System.Drawing.Color.White;
             this.tabs_heading.Location = new System.Drawing.Point(2, 125);
             this.tabs_heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.tabs_heading.Name = "tabs_heading";
-            this.tabs_heading.Size = new System.Drawing.Size(354, 14);
+            this.tabs_heading.Size = new System.Drawing.Size(354, 16);
             this.tabs_heading.TabIndex = 65;
             this.tabs_heading.Text = "*google tabs open when run* (eg: www.google.com)\r\n";
             this.tabs_heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -540,12 +579,12 @@
             this.apps_heading.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.apps_heading, 2);
             this.apps_heading.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.apps_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.apps_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.apps_heading.ForeColor = System.Drawing.Color.White;
-            this.apps_heading.Location = new System.Drawing.Point(2, 40);
+            this.apps_heading.Location = new System.Drawing.Point(2, 41);
             this.apps_heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.apps_heading.Name = "apps_heading";
-            this.apps_heading.Size = new System.Drawing.Size(354, 14);
+            this.apps_heading.Size = new System.Drawing.Size(354, 16);
             this.apps_heading.TabIndex = 62;
             this.apps_heading.Text = "* all the apps you want to open when run*";
             this.apps_heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -557,10 +596,10 @@
             this.personalaty_name.Dock = System.Windows.Forms.DockStyle.Fill;
             this.personalaty_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.personalaty_name.ForeColor = System.Drawing.Color.White;
-            this.personalaty_name.Location = new System.Drawing.Point(2, 14);
+            this.personalaty_name.Location = new System.Drawing.Point(2, 16);
             this.personalaty_name.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.personalaty_name.Name = "personalaty_name";
-            this.personalaty_name.Size = new System.Drawing.Size(175, 26);
+            this.personalaty_name.Size = new System.Drawing.Size(175, 25);
             this.personalaty_name.TabIndex = 58;
             this.personalaty_name.Text = "name";
             this.personalaty_name.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -574,10 +613,10 @@
             this.personalaty_in_vtral_invirement.Dock = System.Windows.Forms.DockStyle.Fill;
             this.personalaty_in_vtral_invirement.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.personalaty_in_vtral_invirement.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.personalaty_in_vtral_invirement.Location = new System.Drawing.Point(2, 266);
+            this.personalaty_in_vtral_invirement.Location = new System.Drawing.Point(2, 268);
             this.personalaty_in_vtral_invirement.Margin = new System.Windows.Forms.Padding(2);
             this.personalaty_in_vtral_invirement.Name = "personalaty_in_vtral_invirement";
-            this.personalaty_in_vtral_invirement.Size = new System.Drawing.Size(354, 18);
+            this.personalaty_in_vtral_invirement.Size = new System.Drawing.Size(354, 17);
             this.personalaty_in_vtral_invirement.TabIndex = 45;
             this.personalaty_in_vtral_invirement.Text = "vtrl env";
             this.personalaty_in_vtral_invirement.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -592,10 +631,10 @@
             this.enable_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.enable_personalaty.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.enable_personalaty.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.enable_personalaty.Location = new System.Drawing.Point(2, 302);
+            this.enable_personalaty.Location = new System.Drawing.Point(2, 305);
             this.enable_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.enable_personalaty.Name = "enable_personalaty";
-            this.enable_personalaty.Size = new System.Drawing.Size(354, 22);
+            this.enable_personalaty.Size = new System.Drawing.Size(354, 19);
             this.enable_personalaty.TabIndex = 36;
             this.enable_personalaty.Text = "Enabled";
             this.enable_personalaty.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -607,12 +646,12 @@
             this.name_heading.AutoSize = true;
             this.menu_personalaty_settings.SetColumnSpan(this.name_heading, 2);
             this.name_heading.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.name_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.name_heading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.name_heading.ForeColor = System.Drawing.Color.White;
             this.name_heading.Location = new System.Drawing.Point(2, 0);
             this.name_heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.name_heading.Name = "name_heading";
-            this.name_heading.Size = new System.Drawing.Size(354, 14);
+            this.name_heading.Size = new System.Drawing.Size(354, 16);
             this.name_heading.TabIndex = 61;
             this.name_heading.Text = "* Name for your personalaty*";
             this.name_heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -624,28 +663,28 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(2, 224);
+            this.label1.Location = new System.Drawing.Point(2, 225);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(175, 26);
+            this.label1.Size = new System.Drawing.Size(175, 25);
             this.label1.TabIndex = 56;
             this.label1.Text = "trigger";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox2
+            // Trigger_feald_personalaty
             // 
-            this.textBox2.AcceptsTab = true;
-            this.textBox2.AccessibleName = "personalaty trigger feld";
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(40)))), ((int)(((byte)(77)))));
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.textBox2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.textBox2.Location = new System.Drawing.Point(184, 229);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(5);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(169, 17);
-            this.textBox2.TabIndex = 57;
+            this.Trigger_feald_personalaty.AcceptsTab = true;
+            this.Trigger_feald_personalaty.AccessibleName = "personalaty trigger feld";
+            this.Trigger_feald_personalaty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(40)))), ((int)(((byte)(77)))));
+            this.Trigger_feald_personalaty.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Trigger_feald_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Trigger_feald_personalaty.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.Trigger_feald_personalaty.ForeColor = System.Drawing.SystemColors.InactiveBorder;
+            this.Trigger_feald_personalaty.Location = new System.Drawing.Point(184, 230);
+            this.Trigger_feald_personalaty.Margin = new System.Windows.Forms.Padding(5);
+            this.Trigger_feald_personalaty.Name = "Trigger_feald_personalaty";
+            this.Trigger_feald_personalaty.Size = new System.Drawing.Size(169, 17);
+            this.Trigger_feald_personalaty.TabIndex = 57;
             // 
             // list_aplications_personalaty
             // 
@@ -654,10 +693,10 @@
             this.list_aplications_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.list_aplications_personalaty.ForeColor = System.Drawing.Color.White;
             this.list_aplications_personalaty.FormattingEnabled = true;
-            this.list_aplications_personalaty.Location = new System.Drawing.Point(2, 56);
+            this.list_aplications_personalaty.Location = new System.Drawing.Point(2, 59);
             this.list_aplications_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.list_aplications_personalaty.Name = "list_aplications_personalaty";
-            this.list_aplications_personalaty.Size = new System.Drawing.Size(175, 67);
+            this.list_aplications_personalaty.Size = new System.Drawing.Size(175, 64);
             this.list_aplications_personalaty.TabIndex = 63;
             // 
             // tableLayoutPanel1
@@ -668,13 +707,13 @@
             this.tableLayoutPanel1.Controls.Add(this.remove_app_personalaty, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.add_app_personalaty, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(181, 56);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(181, 59);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(175, 67);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(175, 64);
             this.tableLayoutPanel1.TabIndex = 64;
             // 
             // remove_app_personalaty
@@ -683,10 +722,10 @@
             this.remove_app_personalaty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.remove_app_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.remove_app_personalaty.ForeColor = System.Drawing.Color.White;
-            this.remove_app_personalaty.Location = new System.Drawing.Point(2, 35);
+            this.remove_app_personalaty.Location = new System.Drawing.Point(2, 34);
             this.remove_app_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.remove_app_personalaty.Name = "remove_app_personalaty";
-            this.remove_app_personalaty.Size = new System.Drawing.Size(171, 30);
+            this.remove_app_personalaty.Size = new System.Drawing.Size(171, 28);
             this.remove_app_personalaty.TabIndex = 1;
             this.remove_app_personalaty.Text = "- Remove Selected";
             this.remove_app_personalaty.UseVisualStyleBackColor = true;
@@ -701,7 +740,7 @@
             this.add_app_personalaty.Location = new System.Drawing.Point(2, 2);
             this.add_app_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.add_app_personalaty.Name = "add_app_personalaty";
-            this.add_app_personalaty.Size = new System.Drawing.Size(171, 29);
+            this.add_app_personalaty.Size = new System.Drawing.Size(171, 28);
             this.add_app_personalaty.TabIndex = 0;
             this.add_app_personalaty.Text = "+ Add App (Browse)";
             this.add_app_personalaty.UseVisualStyleBackColor = true;
@@ -716,13 +755,13 @@
             this.tableLayoutPanel2.Controls.Add(this.add_link_personalaty, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.personalaty_web_feald, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(181, 141);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(181, 143);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(175, 67);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(175, 64);
             this.tableLayoutPanel2.TabIndex = 67;
             // 
             // remove_link_personalaty
@@ -732,10 +771,10 @@
             this.remove_link_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.remove_link_personalaty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.remove_link_personalaty.ForeColor = System.Drawing.Color.White;
-            this.remove_link_personalaty.Location = new System.Drawing.Point(89, 35);
+            this.remove_link_personalaty.Location = new System.Drawing.Point(89, 34);
             this.remove_link_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.remove_link_personalaty.Name = "remove_link_personalaty";
-            this.remove_link_personalaty.Size = new System.Drawing.Size(84, 30);
+            this.remove_link_personalaty.Size = new System.Drawing.Size(84, 28);
             this.remove_link_personalaty.TabIndex = 63;
             this.remove_link_personalaty.Text = "- Remove";
             this.remove_link_personalaty.UseVisualStyleBackColor = true;
@@ -748,10 +787,10 @@
             this.add_link_personalaty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.add_link_personalaty.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.add_link_personalaty.ForeColor = System.Drawing.Color.White;
-            this.add_link_personalaty.Location = new System.Drawing.Point(2, 35);
+            this.add_link_personalaty.Location = new System.Drawing.Point(2, 34);
             this.add_link_personalaty.Margin = new System.Windows.Forms.Padding(2);
             this.add_link_personalaty.Name = "add_link_personalaty";
-            this.add_link_personalaty.Size = new System.Drawing.Size(83, 30);
+            this.add_link_personalaty.Size = new System.Drawing.Size(83, 28);
             this.add_link_personalaty.TabIndex = 62;
             this.add_link_personalaty.Text = "+ Add Link";
             this.add_link_personalaty.UseVisualStyleBackColor = true;
@@ -773,13 +812,116 @@
             this.personalaty_web_feald.Size = new System.Drawing.Size(161, 17);
             this.personalaty_web_feald.TabIndex = 61;
             // 
+            // main_content_container
+            // 
+            this.main_content_container.AccessibleName = "main contex contaner";
+            this.main_content_container.Controls.Add(this.personalaty_settings);
+            this.main_content_container.Controls.Add(this.automation_settings);
+            this.main_content_container.Controls.Add(this.visual_settings);
+            this.main_content_container.Controls.Add(this.sys_settings);
+            this.main_content_container.Controls.Add(this.support_settings);
+            this.main_content_container.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.main_content_container.Location = new System.Drawing.Point(165, 0);
+            this.main_content_container.Name = "main_content_container";
+            this.main_content_container.Size = new System.Drawing.Size(543, 356);
+            this.main_content_container.TabIndex = 2;
+            // 
+            // automation_settings
+            // 
+            this.automation_settings.AccessibleName = "automatin settings";
+            this.automation_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.automation_settings.Controls.Add(this.tableLayoutPanel5);
+            this.automation_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.automation_settings.Location = new System.Drawing.Point(0, 0);
+            this.automation_settings.Margin = new System.Windows.Forms.Padding(2);
+            this.automation_settings.Name = "automation_settings";
+            this.automation_settings.Size = new System.Drawing.Size(543, 356);
+            this.automation_settings.TabIndex = 2;
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.AccessibleName = "personalaty settings";
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel5.Controls.Add(this.checkBox1, 1, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.Padding = new System.Windows.Forms.Padding(13);
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(543, 356);
+            this.tableLayoutPanel5.TabIndex = 1;
+            // 
+            // visual_settings
+            // 
+            this.visual_settings.AccessibleName = "visual_settings";
+            this.visual_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.visual_settings.Controls.Add(this.button1);
+            this.visual_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visual_settings.Location = new System.Drawing.Point(0, 0);
+            this.visual_settings.Margin = new System.Windows.Forms.Padding(2);
+            this.visual_settings.Name = "visual_settings";
+            this.visual_settings.Size = new System.Drawing.Size(543, 356);
+            this.visual_settings.TabIndex = 3;
+            // 
+            // sys_settings
+            // 
+            this.sys_settings.AccessibleName = "sys settings";
+            this.sys_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.sys_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sys_settings.Location = new System.Drawing.Point(0, 0);
+            this.sys_settings.Margin = new System.Windows.Forms.Padding(2);
+            this.sys_settings.Name = "sys_settings";
+            this.sys_settings.Size = new System.Drawing.Size(543, 356);
+            this.sys_settings.TabIndex = 4;
+            // 
+            // support_settings
+            // 
+            this.support_settings.AccessibleName = "support";
+            this.support_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.support_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.support_settings.Location = new System.Drawing.Point(0, 0);
+            this.support_settings.Margin = new System.Windows.Forms.Padding(2);
+            this.support_settings.Name = "support_settings";
+            this.support_settings.Size = new System.Drawing.Size(543, 356);
+            this.support_settings.TabIndex = 5;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(171, 16);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // ui
             // 
             this.AccessibleName = "ui";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(708, 356);
-            this.Controls.Add(this.personalaty_settings);
+            this.Controls.Add(this.main_content_container);
             this.Controls.Add(this.menu_selecter_pannel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -798,12 +940,18 @@
             this.personalaty_settings.ResumeLayout(false);
             this.personalaty_setings.ResumeLayout(false);
             this.menu_show_personalatys_and_buttons.ResumeLayout(false);
-            this.add_deleate_personalaty.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.menu_personalaty_settings.ResumeLayout(false);
             this.menu_personalaty_settings.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.main_content_container.ResumeLayout(false);
+            this.automation_settings.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
+            this.visual_settings.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -822,14 +970,9 @@
         private System.Windows.Forms.Button auto_button;
         private System.Windows.Forms.PictureBox Title_image;
         private System.Windows.Forms.TableLayoutPanel personalaty_setings;
-        private System.Windows.Forms.Panel menu_show_personalatys_and_buttons;
-        private System.Windows.Forms.FlowLayoutPanel add_deleate_personalaty;
-        private System.Windows.Forms.ListBox all_personalatys;
-        private System.Windows.Forms.Button add_personalaty;
-        private System.Windows.Forms.Button del_personalaty;
         private System.Windows.Forms.TableLayoutPanel menu_personalaty_settings;
         private System.Windows.Forms.Label personalaty_name;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox Trigger_feald_personalaty;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox enable_personalaty;
         private System.Windows.Forms.Label name_heading;
@@ -852,6 +995,20 @@
         private System.Windows.Forms.Button save_pesonalatys;
         private System.Windows.Forms.TextBox personalaty_name_feld;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Panel menu_show_personalatys_and_buttons;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.ListBox all_personalatys;
+        private System.Windows.Forms.Button add_personalaty;
+        private System.Windows.Forms.Button del_personalaty;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Panel main_content_container;
+        private System.Windows.Forms.Panel automation_settings;
+        private System.Windows.Forms.Panel visual_settings;
+        private System.Windows.Forms.Panel sys_settings;
+        private System.Windows.Forms.Panel support_settings;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

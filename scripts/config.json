@@ -20,6 +20,10 @@
         "enabled": true,
         "urls": "https://github.com, https://trello.com"
       },
+      "virtual-desktop-switch": {
+        "enabled": false,
+        "target-desktop-name": "Study-Zone"
+      },
       "system-settings-automation": {
         "enabled": true,
         "volume-level": 20,
@@ -28,10 +32,6 @@
       "wallpaper-switch": {
         "enabled": true,
         "wallpaper-path": "D:\\backgrounds\\study.jpg"
-      },
-      "virtual-desktop-switch": {
-        "enabled": false,
-        "target-desktop-name": "Study-Zone"
       }
     },
     {
@@ -46,6 +46,10 @@
         "enabled": false,
         "urls": ""
       },
+      "virtual-desktop-switch": {
+        "enabled": true,
+        "target-desktop-name": "Gaming-Zone"
+      },
       "system-settings-automation": {
         "enabled": true,
         "volume-level": 70,
@@ -54,10 +58,32 @@
       "wallpaper-switch": {
         "enabled": true,
         "wallpaper-path": "D:\\backgrounds\\gaming.jpg"
+      }
+    },
+    {
+      "name": "DAD",
+      "enabled": true,
+      "trigger-shortcut": "ctrl+alt+p",
+      "apps-to-launch": {
+        "enabled": true,
+        "paths": "C:\\Users\\r4t\\Downloads\\spacedesk Installer.exe"
+      },
+      "tabs-to-open": {
+        "enabled": false,
+        "urls": "https://google.co.nz"
       },
       "virtual-desktop-switch": {
+        "enabled": false,
+        "target-desktop-name": "new-desktop"
+      },
+      "system-settings-automation": {
+        "enabled": false,
+        "volume-level": 20,
+        "do-not-disturb": true
+      },
+      "wallpaper-switch": {
         "enabled": true,
-        "target-desktop-name": "Gaming-Zone"
+        "wallpaper-path": "D:\\backgrounds\\interesting.jpg"
       }
     }
   ],

@@ -213,6 +213,22 @@ namespace VoidLauncherUI
             {
                 list_websites_personalaty.Items.AddRange(dynamicUrls.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
+
+            // 6. Load name and trigger shortcut into their text fields
+            personalaty_name_feld.Text = currentPersonality.Name;
+            Trigger_feald_personalaty.Text = currentPersonality.TriggerShortcut;
+
+            // 7. Load checkbox states
+            enable_personalaty.Checked = currentPersonality.Enabled;
+
+            if (currentPersonality.VirtualDesktopSwitch != null)
+            {
+                personalaty_in_vtral_invirement.Checked = currentPersonality.VirtualDesktopSwitch.Enabled;
+            }
+            else
+            {
+                personalaty_in_vtral_invirement.Checked = false;
+            }
         }
 
         private void save_pesonalatys_Click(object sender, EventArgs e)
@@ -226,15 +242,33 @@ namespace VoidLauncherUI
         }
 
         // Separate reusable helper to write the FULL preserved config back to disk
+
         private void SaveSettings()
         {
             if (currentPersonality == null || fullConfig == null) return;
 
-            // 1. Collect everything currently listed in your UI listboxes and store it into the object
+            // 1: Collect ALL data from the UI controls into the object
             currentPersonality.AppsToLaunch.Paths = string.Join(", ", list_aplications_personalaty.Items.Cast<string>());
             currentPersonality.TabsToOpen.Urls = string.Join(", ", list_websites_personalaty.Items.Cast<string>());
+            currentPersonality.Name = personalaty_name_feld.Text.Trim();
+            currentPersonality.TriggerShortcut = Trigger_feald_personalaty.Text.Trim();
+            currentPersonality.Enabled = enable_personalaty.Checked;
 
-            // 2. chuck it in the JSON without edinting that isint in the lists to avoid breaking anything else in the config file
+            // Make sure the virtual desktop object exists before assigning to it
+            if (currentPersonality.VirtualDesktopSwitch == null)
+            {
+                currentPersonality.VirtualDesktopSwitch = new VirtualDesktopSwitchClass { TargetDesktopName = "" };
+            }
+            currentPersonality.VirtualDesktopSwitch.Enabled = personalaty_in_vtral_invirement.Checked;
+
+            // 2: Update the visual listbox text on the left 
+            int selectedIndex = all_personalatys.SelectedIndex;
+            if (selectedIndex != -1)
+            {
+                all_personalatys.Items[selectedIndex] = currentPersonality.Name;
+            }
+            
+            // 3: Save everything out to the JSON file
             try
             {
                 string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
@@ -248,6 +282,155 @@ namespace VoidLauncherUI
             }
         }
 
+        private void add_personalaty_Click(object sender, EventArgs e)
+        {
+           if (fullConfig == null || personalitiesList == null) return;
+
+            // 1. Create a brand new personality template with defaults
+            Personality newPersonality = new Personality
+            {
+                Name = "new personality",
+                Enabled = true,
+                TriggerShortcut = "ctrl+alt+n",
+                AppsToLaunch = new AppsToLaunchClass 
+                { 
+                    Enabled = true, 
+                    Paths = @"C:\Program Files\some-app.exe" 
+                },
+                TabsToOpen = new TabsToOpenClass 
+                { 
+                    Enabled = false, 
+                    Urls = "https://www.google.com" 
+                },
+                VirtualDesktopSwitch = new VirtualDesktopSwitchClass 
+                { 
+                    Enabled = false, 
+                    TargetDesktopName = "new-desktop" 
+                },
+                // inject these into AdditionalData so they write out to the JSON perfectly 
+                // without needing explicit C# classes for them yet
+                AdditionalData = new Dictionary<string, object>
+                {
+                    {
+                        "system-settings-automation", new Dictionary<string, object>
+                        {
+                            { "enabled", false },
+                            { "volume-level", 20 },
+                            { "do-not-disturb", true }
+                        }
+                    },
+                    {
+                        "wallpaper-switch", new Dictionary<string, object>
+                        {
+                            { "enabled", true },
+                            { "wallpaper-path", @"D:\backgrounds\interesting.jpg" }
+                        }
+                    }
+                }
+            };
+
+            // 2. Push it into our configuration tracking arrays
+            personalitiesList.Add(newPersonality);
+            all_personalatys.Items.Add(newPersonality.Name);
+
+            // 3. Force-select the new item (this automatically runs SelectedIndexChanged to load your new defaults on-screen)
+            all_personalatys.SelectedIndex = all_personalatys.Items.Count - 1;
+
+            // 4. Save the container state immediately to your config file
+            try
+            {
+                string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
+                File.WriteAllText(GetConfigFilePath(), updatedJson);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save new personality: {ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void del_personalaty_Click(object sender, EventArgs e)
+        {
+            int selectedIndex = all_personalatys.SelectedIndex;
+
+            // 1. Double check they have an item highlighted
+            if (selectedIndex == -1)
+            {
+                MessageBox.Show("Please select a personality from the list to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2. Safety confirmation prompt
+            var confirmResult = MessageBox.Show($"Are you sure you want to delete '{personalitiesList[selectedIndex].Name}'?", 
+                                                 "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (confirmResult != DialogResult.Yes) return;
+
+            // 3. Remove it from your local collections
+            personalitiesList.RemoveAt(selectedIndex);
+            all_personalatys.Items.RemoveAt(selectedIndex);
+
+            // 4. Update the JSON file right away to commit the deletion
+            try
+            {
+                string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
+                File.WriteAllText(GetConfigFilePath(), updatedJson);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to sync file deletion: {ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            // 5. UI Cleanup: Select another profile if any remain, otherwise empty the screen
+            if (all_personalatys.Items.Count > 0)
+            {
+                all_personalatys.SelectedIndex = Math.Min(selectedIndex, all_personalatys.Items.Count - 1);
+            }
+            else
+            {
+                currentPersonality = null;
+                personalaty_name_feld.Clear();
+                Trigger_feald_personalaty.Clear();
+                list_aplications_personalaty.Items.Clear();
+                list_websites_personalaty.Items.Clear();
+                enable_personalaty.Checked = false;
+                personalaty_in_vtral_invirement.Checked = false;
+            }
+        }
+
+        private void personalaty_button_Click(object sender, EventArgs e)
+        {
+            SwitchSettingsView(personalaty_settings);
+        }
+
+        private void auto_button_Click(object sender, EventArgs e)
+        {
+            SwitchSettingsView(automation_settings);
+        }
+
+        private void visual_button_Click(object sender, EventArgs e)
+        {
+            SwitchSettingsView(visual_settings);
+        }
+
+        private void sys_button_Click(object sender, EventArgs e)
+        {
+            SwitchSettingsView(sys_settings);
+        }
+
+        private void suport_button_Click(object sender, EventArgs e)
+        {
+            SwitchSettingsView(support_settings);
+        }
+    
+        //switch between setting panels
+        private void SwitchSettingsView(Panel panelToShow)
+        {
+            if (panelToShow == null) return;
+
+            // Snaps the selected panel to the top of the stack inside main_content_container
+            panelToShow.BringToFront();
+        }
+    
     }
     public class RootConfig
     {
@@ -279,10 +462,22 @@ namespace VoidLauncherUI
         [JsonProperty("tabs-to-open")]
         public TabsToOpenClass TabsToOpen { get; set; }
 
+        [JsonProperty("virtual-desktop-switch")]
+        public VirtualDesktopSwitchClass VirtualDesktopSwitch { get; set; }
+
         [JsonExtensionData]
         public Dictionary<string, object> AdditionalData { get; set; }
     }
 
+    public class VirtualDesktopSwitchClass
+    {
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("target-desktop-name")]
+        public string TargetDesktopName { get; set; }
+    }
+    
     public class AppsToLaunchClass
     {
         [JsonProperty("enabled")]
