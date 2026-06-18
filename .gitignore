@@ -1,0 +1,15 @@
+# Visual Studio cache and user-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Compiled build outputs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+
+# Packages
+packages/
