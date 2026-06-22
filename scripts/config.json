@@ -59,32 +59,6 @@
         "enabled": true,
         "wallpaper-path": "D:\\backgrounds\\gaming.jpg"
       }
-    },
-    {
-      "name": "DAD",
-      "enabled": true,
-      "trigger-shortcut": "ctrl+alt+p",
-      "apps-to-launch": {
-        "enabled": true,
-        "paths": "C:\\Users\\r4t\\Downloads\\spacedesk Installer.exe"
-      },
-      "tabs-to-open": {
-        "enabled": false,
-        "urls": "https://google.co.nz"
-      },
-      "virtual-desktop-switch": {
-        "enabled": false,
-        "target-desktop-name": "new-desktop"
-      },
-      "system-settings-automation": {
-        "enabled": false,
-        "volume-level": 20,
-        "do-not-disturb": true
-      },
-      "wallpaper-switch": {
-        "enabled": true,
-        "wallpaper-path": "D:\\backgrounds\\interesting.jpg"
-      }
     }
   ],
   "feature-ram-monitor": {

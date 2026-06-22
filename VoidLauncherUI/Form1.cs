@@ -69,11 +69,17 @@ namespace VoidLauncherUI
 
                         // clear the list to avoid duplicates if reloading
                         all_personalatys.Items.Clear();
+                        all_personalatys_auto.Items.Clear();
+                        list_personalatys_visual.Items.Clear();
+                        list_personalatys_sys.Items.Clear();
 
-                        // Loop through your JSON array and add the names ("Study", "Gaming") into the ListBox
+                        // Loop through your JSON array and add the names ("Study", "Gaming") into all ListBoxes
                         foreach (var personality in personalitiesList)
                         {
                             all_personalatys.Items.Add(personality.Name);
+                            all_personalatys_auto.Items.Add(personality.Name);
+                            list_personalatys_visual.Items.Add(personality.Name);
+                            list_personalatys_sys.Items.Add(personality.Name);
                         }
                     }
                 }
@@ -92,6 +98,7 @@ namespace VoidLauncherUI
         {
             InitializeComponent();
             LoadPersonalitiesFromJson();
+            
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -190,23 +197,32 @@ namespace VoidLauncherUI
 
         private void all_personalatys_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // 1. make sure the user actually selected a valid item index
             if (all_personalatys.SelectedIndex == -1) return;
+            LoadPersonalityData(all_personalatys.SelectedIndex);
+        }
 
-            // 2. Point currentPersonality to the item they clicked on in the roster list
-            currentPersonality = personalitiesList[all_personalatys.SelectedIndex];
+        private void all_personalatys_auto_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (all_personalatys_auto.SelectedIndex == -1) return;
+            LoadPersonalityData(all_personalatys_auto.SelectedIndex);
+        }
 
-            // 3. Clear out old application views
+        private void LoadPersonalityData(int selectedIndex)
+        {
+            // Point currentPersonality to the selected item
+            currentPersonality = personalitiesList[selectedIndex];
+
+            // Clear out old application views
             list_aplications_personalaty.Items.Clear();
 
-            // 4. Split the comma separated path string and drop them into the app list box
+            // Split the comma separated path string and drop them into the app list box
             string dynamicPaths = currentPersonality.AppsToLaunch.Paths;
             if (!string.IsNullOrEmpty(dynamicPaths))
             {
                 list_aplications_personalaty.Items.AddRange(dynamicPaths.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
 
-            // 5. Do the exact same thing for the web URLs list box
+            // Do the exact same thing for the web URLs list box
             list_websites_personalaty.Items.Clear();
             string dynamicUrls = currentPersonality.TabsToOpen.Urls;
             if (!string.IsNullOrEmpty(dynamicUrls))
@@ -214,11 +230,10 @@ namespace VoidLauncherUI
                 list_websites_personalaty.Items.AddRange(dynamicUrls.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
 
-            // 6. Load name and trigger shortcut into their text fields
+            // Load name and trigger shortcut into their text fields
             personalaty_name_feld.Text = currentPersonality.Name;
-            Trigger_feald_personalaty.Text = currentPersonality.TriggerShortcut;
 
-            // 7. Load checkbox states
+            // Load checkbox states
             enable_personalaty.Checked = currentPersonality.Enabled;
 
             if (currentPersonality.VirtualDesktopSwitch != null)
@@ -251,7 +266,7 @@ namespace VoidLauncherUI
             currentPersonality.AppsToLaunch.Paths = string.Join(", ", list_aplications_personalaty.Items.Cast<string>());
             currentPersonality.TabsToOpen.Urls = string.Join(", ", list_websites_personalaty.Items.Cast<string>());
             currentPersonality.Name = personalaty_name_feld.Text.Trim();
-            currentPersonality.TriggerShortcut = Trigger_feald_personalaty.Text.Trim();
+
             currentPersonality.Enabled = enable_personalaty.Checked;
 
             // Make sure the virtual desktop object exists before assigning to it
@@ -266,6 +281,9 @@ namespace VoidLauncherUI
             if (selectedIndex != -1)
             {
                 all_personalatys.Items[selectedIndex] = currentPersonality.Name;
+                all_personalatys_auto.Items[selectedIndex] = currentPersonality.Name;
+                list_personalatys_visual.Items[selectedIndex] = currentPersonality.Name;
+                list_personalatys_sys.Items[selectedIndex] = currentPersonality.Name;
             }
             
             // 3: Save everything out to the JSON file
@@ -332,6 +350,9 @@ namespace VoidLauncherUI
             // 2. Push it into our configuration tracking arrays
             personalitiesList.Add(newPersonality);
             all_personalatys.Items.Add(newPersonality.Name);
+            all_personalatys_auto.Items.Add(newPersonality.Name);
+            list_personalatys_visual.Items.Add(newPersonality.Name);
+            list_personalatys_sys.Items.Add(newPersonality.Name);
 
             // 3. Force-select the new item (this automatically runs SelectedIndexChanged to load your new defaults on-screen)
             all_personalatys.SelectedIndex = all_personalatys.Items.Count - 1;
@@ -368,6 +389,9 @@ namespace VoidLauncherUI
             // 3. Remove it from your local collections
             personalitiesList.RemoveAt(selectedIndex);
             all_personalatys.Items.RemoveAt(selectedIndex);
+            all_personalatys_auto.Items.RemoveAt(selectedIndex);
+            list_personalatys_visual.Items.RemoveAt(selectedIndex);
+            list_personalatys_sys.Items.RemoveAt(selectedIndex);
 
             // 4. Update the JSON file right away to commit the deletion
             try
@@ -389,7 +413,6 @@ namespace VoidLauncherUI
             {
                 currentPersonality = null;
                 personalaty_name_feld.Clear();
-                Trigger_feald_personalaty.Clear();
                 list_aplications_personalaty.Items.Clear();
                 list_websites_personalaty.Items.Clear();
                 enable_personalaty.Checked = false;
@@ -430,7 +453,33 @@ namespace VoidLauncherUI
             // Snaps the selected panel to the top of the stack inside main_content_container
             panelToShow.BringToFront();
         }
-    
+
+        private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void save_web_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void save_apps_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void list_personalatys_visual_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (list_personalatys_visual.SelectedIndex == -1) return;
+            LoadPersonalityData(list_personalatys_visual.SelectedIndex);
+        }
+
+        private void list_personalatys_sys_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (list_personalatys_sys.SelectedIndex == -1) return;
+            LoadPersonalityData(list_personalatys_sys.SelectedIndex);
+        }
     }
     public class RootConfig
     {
