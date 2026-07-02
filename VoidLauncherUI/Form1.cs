@@ -209,40 +209,73 @@ namespace VoidLauncherUI
 
         private void LoadPersonalityData(int selectedIndex)
         {
-            // Point currentPersonality to the selected item
             currentPersonality = personalitiesList[selectedIndex];
 
-            // Clear out old application views
+            // --- PANEL 1: PERSONALITIES VIEW ---
             list_aplications_personalaty.Items.Clear();
-
-            // Split the comma separated path string and drop them into the app list box
-            string dynamicPaths = currentPersonality.AppsToLaunch.Paths;
+            string dynamicPaths = currentPersonality.AppsToLaunch?.Paths;
             if (!string.IsNullOrEmpty(dynamicPaths))
             {
                 list_aplications_personalaty.Items.AddRange(dynamicPaths.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
 
-            // Do the exact same thing for the web URLs list box
             list_websites_personalaty.Items.Clear();
-            string dynamicUrls = currentPersonality.TabsToOpen.Urls;
+            string dynamicUrls = currentPersonality.TabsToOpen?.Urls;
             if (!string.IsNullOrEmpty(dynamicUrls))
             {
                 list_websites_personalaty.Items.AddRange(dynamicUrls.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
 
-            // Load name and trigger shortcut into their text fields
             personalaty_name_feld.Text = currentPersonality.Name;
-
-            // Load checkbox states
             enable_personalaty.Checked = currentPersonality.Enabled;
 
-            if (currentPersonality.VirtualDesktopSwitch != null)
+            // --- PANEL 2: AUTOMATION VIEW & SWITCHES ---
+            // 1. App and Tab Checkboxes
+            if (currentPersonality.AppsToLaunch != null)
             {
-                personalaty_in_vtral_invirement.Checked = currentPersonality.VirtualDesktopSwitch.Enabled;
+                enable_apps.Checked = currentPersonality.AppsToLaunch.Enabled;
             }
             else
             {
-                personalaty_in_vtral_invirement.Checked = false;
+                enable_apps.Checked = false;
+            }
+
+            if (currentPersonality.TabsToOpen != null)
+            {
+                enable_tabs.Checked = currentPersonality.TabsToOpen.Enabled;
+            }
+            else
+            {
+                enable_tabs.Checked = false;
+            }
+
+            // 2. Trigger Shortcut TextBox
+            trigger.Text = currentPersonality.TriggerShortcut ?? "";
+
+            // 3. Virtual Desktop Checkbox & Virtual Desktop Name TextBox
+            if (currentPersonality.VirtualDesktopSwitch != null)
+            {
+                enable_Virtual_destop.Checked = currentPersonality.VirtualDesktopSwitch.Enabled;
+                Virtual_destop_name.Text = currentPersonality.VirtualDesktopSwitch.TargetDesktopName ?? "";
+            }
+            else
+            {
+                enable_Virtual_destop.Checked = false;
+                Virtual_destop_name.Text = "";
+            }
+
+            // --- PANEL 3: SYSTEM SETTINGS (PRE-WIRED FOR LATER) ---
+            if (currentPersonality.SystemSettingsAutomation != null)
+            {
+                // chk_sys_automation_enabled.Checked = currentPersonality.SystemSettingsAutomation.Enabled;
+                // num_volume_level.Value = currentPersonality.SystemSettingsAutomation.VolumeLevel;
+                // chk_dnd_enabled.Checked = currentPersonality.SystemSettingsAutomation.DoNotDisturb;
+            }
+
+            if (currentPersonality.WallpaperSwitch != null)
+            {
+                // chk_wallpaper_enabled.Checked = currentPersonality.WallpaperSwitch.Enabled;
+                // txt_wallpaper_path.Text = currentPersonality.WallpaperSwitch.WallpaperPath;
             }
         }
 
@@ -262,21 +295,57 @@ namespace VoidLauncherUI
         {
             if (currentPersonality == null || fullConfig == null) return;
 
-            // 1: Collect ALL data from the UI controls into the object
+            // 1. Collect data from Personalities tab
             currentPersonality.AppsToLaunch.Paths = string.Join(", ", list_aplications_personalaty.Items.Cast<string>());
             currentPersonality.TabsToOpen.Urls = string.Join(", ", list_websites_personalaty.Items.Cast<string>());
             currentPersonality.Name = personalaty_name_feld.Text.Trim();
-
             currentPersonality.Enabled = enable_personalaty.Checked;
 
-            // Make sure the virtual desktop object exists before assigning to it
             if (currentPersonality.VirtualDesktopSwitch == null)
             {
                 currentPersonality.VirtualDesktopSwitch = new VirtualDesktopSwitchClass { TargetDesktopName = "" };
             }
-            currentPersonality.VirtualDesktopSwitch.Enabled = personalaty_in_vtral_invirement.Checked;
+            currentPersonality.VirtualDesktopSwitch.Enabled = enable_Virtual_destop.Checked;
 
-            // 2: Update the visual listbox text on the left 
+            if (currentPersonality.AppsToLaunch == null)
+            {
+                currentPersonality.AppsToLaunch = new AppsToLaunchClass();
+            }
+            currentPersonality.AppsToLaunch.Enabled = enable_apps.Checked;
+
+            if (currentPersonality.TabsToOpen == null)
+            {
+                currentPersonality.TabsToOpen = new TabsToOpenClass();
+            }
+            currentPersonality.TabsToOpen.Enabled = enable_tabs.Checked;
+
+            // 2. Collect data from Automation tab (Safety checks + templates ready for your controls)
+            
+            // === FIX 1: Save the shortcut key sequence from the correct text field ===
+            currentPersonality.TriggerShortcut = trigger.Text.Trim();
+
+            // === FIX 2: Save the virtual desktop target name from the correct text field ===
+            currentPersonality.VirtualDesktopSwitch.TargetDesktopName = Virtual_destop_name.Text.Trim();
+
+            if (currentPersonality.SystemSettingsAutomation == null)
+            {
+                currentPersonality.SystemSettingsAutomation = new SystemSettingsAutomationClass();
+            }
+            // UNCOMMENT THESE WHEN YOUR CONTROLS ARE READY:
+            // currentPersonality.SystemSettingsAutomation.Enabled = chk_sys_automation_enabled.Checked;
+            // currentPersonality.SystemSettingsAutomation.VolumeLevel = (int)num_volume_level.Value;
+            // currentPersonality.SystemSettingsAutomation.DofNotDisturb = chk_dnd_enabled.Checked;
+
+            if (currentPersonality.WallpaperSwitch == null)
+            {
+                currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+            }
+            // UNCOMMENT THESE WHEN YOUR CONTROLS ARE READY:
+            // currentPersonality.WallpaperSwitch.Enabled = chk_wallpaper_enabled.Checked;
+            // currentPersonality.WallpaperSwitch.WallpaperPath = txt_wallpaper_path.Text.Trim();
+
+
+            // 3. Update all visual listbox rows across all panels
             int selectedIndex = all_personalatys.SelectedIndex;
             if (selectedIndex != -1)
             {
@@ -286,13 +355,12 @@ namespace VoidLauncherUI
                 list_personalatys_sys.Items[selectedIndex] = currentPersonality.Name;
             }
             
-            // 3: Save everything out to the JSON file
+            // 4. Save everything out to the single JSON file
             try
             {
                 string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
-                
                 File.WriteAllText(GetConfigFilePath(), updatedJson);
-                MessageBox.Show("All changes synchronized into JSON file successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("All changes across all menus saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -304,60 +372,37 @@ namespace VoidLauncherUI
         {
            if (fullConfig == null || personalitiesList == null) return;
 
-            // 1. Create a brand new personality template with defaults
             Personality newPersonality = new Personality
             {
                 Name = "new personality",
                 Enabled = true,
                 TriggerShortcut = "ctrl+alt+n",
-                AppsToLaunch = new AppsToLaunchClass 
-                { 
-                    Enabled = true, 
-                    Paths = @"C:\Program Files\some-app.exe" 
-                },
-                TabsToOpen = new TabsToOpenClass 
-                { 
-                    Enabled = false, 
-                    Urls = "https://www.google.com" 
-                },
-                VirtualDesktopSwitch = new VirtualDesktopSwitchClass 
-                { 
-                    Enabled = false, 
-                    TargetDesktopName = "new-desktop" 
-                },
-                // inject these into AdditionalData so they write out to the JSON perfectly 
-                // without needing explicit C# classes for them yet
-                AdditionalData = new Dictionary<string, object>
+                AppsToLaunch = new AppsToLaunchClass { Enabled = true, Paths = @"C:\Program Files\some-app.exe" },
+                TabsToOpen = new TabsToOpenClass { Enabled = false, Urls = "https://www.google.com" },
+                VirtualDesktopSwitch = new VirtualDesktopSwitchClass { Enabled = false, TargetDesktopName = "new-desktop" },
+                
+                // Uses our clean new classes for consistent initialization defaults!
+                SystemSettingsAutomation = new SystemSettingsAutomationClass
                 {
-                    {
-                        "system-settings-automation", new Dictionary<string, object>
-                        {
-                            { "enabled", false },
-                            { "volume-level", 20 },
-                            { "do-not-disturb", true }
-                        }
-                    },
-                    {
-                        "wallpaper-switch", new Dictionary<string, object>
-                        {
-                            { "enabled", true },
-                            { "wallpaper-path", @"D:\backgrounds\interesting.jpg" }
-                        }
-                    }
+                    Enabled = false,
+                    VolumeLevel = 20,
+                    DoNotDisturb = true
+                },
+                WallpaperSwitch = new WallpaperSwitchClass
+                {
+                    Enabled = true,
+                    WallpaperPath = @"D:\backgrounds\interesting.jpg"
                 }
             };
 
-            // 2. Push it into our configuration tracking arrays
             personalitiesList.Add(newPersonality);
             all_personalatys.Items.Add(newPersonality.Name);
             all_personalatys_auto.Items.Add(newPersonality.Name);
             list_personalatys_visual.Items.Add(newPersonality.Name);
             list_personalatys_sys.Items.Add(newPersonality.Name);
 
-            // 3. Force-select the new item (this automatically runs SelectedIndexChanged to load your new defaults on-screen)
             all_personalatys.SelectedIndex = all_personalatys.Items.Count - 1;
 
-            // 4. Save the container state immediately to your config file
             try
             {
                 string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
@@ -416,7 +461,7 @@ namespace VoidLauncherUI
                 list_aplications_personalaty.Items.Clear();
                 list_websites_personalaty.Items.Clear();
                 enable_personalaty.Checked = false;
-                personalaty_in_vtral_invirement.Checked = false;
+                enable_Virtual_destop.Checked = false;
             }
         }
 
@@ -480,6 +525,46 @@ namespace VoidLauncherUI
             if (list_personalatys_sys.SelectedIndex == -1) return;
             LoadPersonalityData(list_personalatys_sys.SelectedIndex);
         }
+
+        private void enable_tabs_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void enable_personalaty_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged_1(object sender, EventArgs e)
+        {
+            //this is the trigger, it wont populate the names :(
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            //this is enable the virtual inverment
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            //this is name the virtual inverment
+        }
+
+        private void tableLayoutPanel7_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
     public class RootConfig
     {
@@ -514,8 +599,38 @@ namespace VoidLauncherUI
         [JsonProperty("virtual-desktop-switch")]
         public VirtualDesktopSwitchClass VirtualDesktopSwitch { get; set; }
 
+        // NEW: Strong types for your Automation & Wallpaper settings!
+        [JsonProperty("system-settings-automation")]
+        public SystemSettingsAutomationClass SystemSettingsAutomation { get; set; }
+
+        [JsonProperty("wallpaper-switch")]
+        public WallpaperSwitchClass WallpaperSwitch { get; set; }
+
         [JsonExtensionData]
         public Dictionary<string, object> AdditionalData { get; set; }
+    }
+
+    // Class structure matching the automation JSON format
+    public class SystemSettingsAutomationClass
+    {
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("volume-level")]
+        public int VolumeLevel { get; set; }
+
+        [JsonProperty("do-not-disturb")]
+        public bool DoNotDisturb { get; set; }
+    }
+
+    // Class structure matching the wallpaper JSON format
+    public class WallpaperSwitchClass
+    {
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("wallpaper-path")]
+        public string WallpaperPath { get; set; }
     }
 
     public class VirtualDesktopSwitchClass
