@@ -277,11 +277,28 @@ namespace VoidLauncherUI
                 // chk_wallpaper_enabled.Checked = currentPersonality.WallpaperSwitch.Enabled;
                 // txt_wallpaper_path.Text = currentPersonality.WallpaperSwitch.WallpaperPath;
             }
-        }
 
-        private void save_pesonalatys_Click(object sender, EventArgs e)
-        {
-            SaveSettings(); //idk what is the right one and for some random reason this works so i leave it :D
+            // --- PANEL 4: VISUAL SETTINGS FLOW ---
+            list_wallpapers.Items.Clear(); // Clear the listbox first so it doesn't accumulate entries
+
+            if (currentPersonality.WallpaperSwitch != null)
+            {
+                enable_wallpaper.Checked = currentPersonality.WallpaperSwitch.Enabled;
+                
+                // Add the wallpaper path to your ListBox if it's not empty
+                if (!string.IsNullOrEmpty(currentPersonality.WallpaperSwitch.WallpaperPath))
+                {
+                    list_wallpapers.Items.Add(currentPersonality.WallpaperSwitch.WallpaperPath);
+                }
+                
+                // If you have a text field displaying the current path, uncomment the next line:
+                // txt_wallpaper_path.Text = currentPersonality.WallpaperSwitch.WallpaperPath ?? "";
+            }
+            else
+            {
+                enable_wallpaper.Checked = false;
+                // txt_wallpaper_path.Text = "";
+            }
         }
 
         private void save_pesonalatys_Click_1(object sender, EventArgs e)
@@ -340,9 +357,17 @@ namespace VoidLauncherUI
             {
                 currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
             }
-            // UNCOMMENT THESE WHEN YOUR CONTROLS ARE READY:
-            // currentPersonality.WallpaperSwitch.Enabled = chk_wallpaper_enabled.Checked;
-            // currentPersonality.WallpaperSwitch.WallpaperPath = txt_wallpaper_path.Text.Trim();
+            currentPersonality.WallpaperSwitch.Enabled = enable_wallpaper.Checked;
+
+            // Grab the path straight out of the listbox if there is an item in it
+            if (list_wallpapers.Items.Count > 0)
+            {
+                currentPersonality.WallpaperSwitch.WallpaperPath = list_wallpapers.Items[0].ToString();
+            }
+            else
+            {
+                currentPersonality.WallpaperSwitch.WallpaperPath = "";
+            }
 
 
             // 3. Update all visual listbox rows across all panels
@@ -562,6 +587,77 @@ namespace VoidLauncherUI
         }
 
         private void tableLayoutPanel7_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void visual_settins_panel_Paint(object sender, PaintEventArgs e)
+        {
+            
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+    private void enable_wallpaper_CheckedChanged(object sender, EventArgs e)
+    {
+        if (currentPersonality == null) return;
+
+        if (currentPersonality.WallpaperSwitch == null)
+        {
+            currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+        }
+        currentPersonality.WallpaperSwitch.Enabled = enable_wallpaper.Checked;
+    }
+
+    private void add_wallpaper_Click(object sender, EventArgs e)
+    {
+        if (currentPersonality == null)
+        {
+            MessageBox.Show("Please select a personality first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        {
+            openFileDialog.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*";
+            openFileDialog.Title = "Select a Background Wallpaper";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (currentPersonality.WallpaperSwitch == null)
+                {
+                    currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+                }
+                currentPersonality.WallpaperSwitch.WallpaperPath = openFileDialog.FileName;
+                
+                // --- Update the ListBox instantly ---
+                list_wallpapers.Items.Clear();
+                list_wallpapers.Items.Add(openFileDialog.FileName);
+                
+                MessageBox.Show($"Wallpaper path selected:\n{openFileDialog.FileName}\n\nDon't forget to click Save Changes!", "Path Set", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+    }
+
+
+
+    private void remove_wallpaper_Click(object sender, EventArgs e)
+    {
+        if (currentPersonality == null) return;
+
+        if (currentPersonality.WallpaperSwitch != null)
+        {
+            currentPersonality.WallpaperSwitch.WallpaperPath = "";
+            MessageBox.Show("Wallpaper path cleared. Click Save Changes to commit.", "Cleared", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+
+        private void list_wallpapers_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
