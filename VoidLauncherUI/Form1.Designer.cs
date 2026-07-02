@@ -72,6 +72,14 @@
             this.personalaty_web_feald = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.main_content_container = new System.Windows.Forms.Panel();
+            this.visual_settings = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.del_personalatys_visual = new System.Windows.Forms.Button();
+            this.del_personalatys_auto = new System.Windows.Forms.Button();
+            this.list_personalatys_visual = new System.Windows.Forms.ListBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.automation_settings = new System.Windows.Forms.Panel();
             this.layout_automation = new System.Windows.Forms.TableLayoutPanel();
             this.automation_pannel_personalatys = new System.Windows.Forms.TableLayoutPanel();
@@ -90,13 +98,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.visual_settings = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.del_personalatys_visual = new System.Windows.Forms.Button();
-            this.del_personalatys_auto = new System.Windows.Forms.Button();
-            this.list_personalatys_visual = new System.Windows.Forms.ListBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.sys_settings = new System.Windows.Forms.Panel();
             this.sys_personalaty_table = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
@@ -105,7 +106,6 @@
             this.list_personalatys_sys = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.support_settings = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.menu_selecter_pannel.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.menu_button_table.SuspendLayout();
@@ -119,13 +119,13 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.main_content_container.SuspendLayout();
+            this.visual_settings.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
             this.automation_settings.SuspendLayout();
             this.layout_automation.SuspendLayout();
             this.automation_pannel_personalatys.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            this.visual_settings.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
             this.sys_settings.SuspendLayout();
             this.sys_personalaty_table.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
@@ -816,6 +816,139 @@
             this.main_content_container.Size = new System.Drawing.Size(814, 548);
             this.main_content_container.TabIndex = 2;
             // 
+            // visual_settings
+            // 
+            this.visual_settings.AccessibleName = "visual_settings";
+            this.visual_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.visual_settings.Controls.Add(this.tableLayoutPanel5);
+            this.visual_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.visual_settings.Location = new System.Drawing.Point(0, 0);
+            this.visual_settings.Name = "visual_settings";
+            this.visual_settings.Size = new System.Drawing.Size(814, 548);
+            this.visual_settings.TabIndex = 3;
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.AccessibleName = "personalaty settings";
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel6, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel9, 1, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.Padding = new System.Windows.Forms.Padding(20);
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(814, 548);
+            this.tableLayoutPanel5.TabIndex = 2;
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.Controls.Add(this.del_personalatys_visual, 1, 2);
+            this.tableLayoutPanel6.Controls.Add(this.del_personalatys_auto, 0, 2);
+            this.tableLayoutPanel6.Controls.Add(this.list_personalatys_visual, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(24, 25);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 3;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(224, 498);
+            this.tableLayoutPanel6.TabIndex = 3;
+            // 
+            // del_personalatys_visual
+            // 
+            this.del_personalatys_visual.AccessibleName = "del personalaty";
+            this.del_personalatys_visual.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.del_personalatys_visual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.del_personalatys_visual.ForeColor = System.Drawing.Color.White;
+            this.del_personalatys_visual.Location = new System.Drawing.Point(115, 450);
+            this.del_personalatys_visual.Name = "del_personalatys_visual";
+            this.del_personalatys_visual.Size = new System.Drawing.Size(106, 45);
+            this.del_personalatys_visual.TabIndex = 1;
+            this.del_personalatys_visual.Text = "Delete";
+            this.del_personalatys_visual.UseVisualStyleBackColor = true;
+            this.del_personalatys_visual.Click += new System.EventHandler(this.del_personalaty_Click);
+            // 
+            // del_personalatys_auto
+            // 
+            this.del_personalatys_auto.AccessibleDescription = "";
+            this.del_personalatys_auto.AccessibleName = "add personalaty";
+            this.del_personalatys_auto.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.del_personalatys_auto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.del_personalatys_auto.ForeColor = System.Drawing.Color.White;
+            this.del_personalatys_auto.Location = new System.Drawing.Point(3, 450);
+            this.del_personalatys_auto.Name = "del_personalatys_auto";
+            this.del_personalatys_auto.Size = new System.Drawing.Size(106, 45);
+            this.del_personalatys_auto.TabIndex = 0;
+            this.del_personalatys_auto.Text = "Add";
+            this.del_personalatys_auto.UseVisualStyleBackColor = true;
+            this.del_personalatys_auto.Click += new System.EventHandler(this.add_personalaty_Click);
+            // 
+            // list_personalatys_visual
+            // 
+            this.list_personalatys_visual.AccessibleName = "all personalatys";
+            this.list_personalatys_visual.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(59)))), ((int)(((byte)(115)))));
+            this.tableLayoutPanel6.SetColumnSpan(this.list_personalatys_visual, 2);
+            this.list_personalatys_visual.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_personalatys_visual.ForeColor = System.Drawing.Color.White;
+            this.list_personalatys_visual.FormattingEnabled = true;
+            this.list_personalatys_visual.ItemHeight = 20;
+            this.list_personalatys_visual.Location = new System.Drawing.Point(3, 52);
+            this.list_personalatys_visual.Name = "list_personalatys_visual";
+            this.list_personalatys_visual.Size = new System.Drawing.Size(218, 392);
+            this.list_personalatys_visual.TabIndex = 0;
+            this.list_personalatys_visual.SelectedIndexChanged += new System.EventHandler(this.list_personalatys_visual_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.tableLayoutPanel6.SetColumnSpan(this.label4, 2);
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.White;
+            this.label4.Location = new System.Drawing.Point(4, 0);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(216, 49);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Personalities";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(255, 23);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 7;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(536, 502);
+            this.tableLayoutPanel9.TabIndex = 4;
+            // 
             // automation_settings
             // 
             this.automation_settings.AccessibleName = "automatin settings";
@@ -1117,120 +1250,6 @@
             this.label7.Text = "Automation Settings";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // visual_settings
-            // 
-            this.visual_settings.AccessibleName = "visual_settings";
-            this.visual_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
-            this.visual_settings.Controls.Add(this.tableLayoutPanel5);
-            this.visual_settings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.visual_settings.Location = new System.Drawing.Point(0, 0);
-            this.visual_settings.Name = "visual_settings";
-            this.visual_settings.Size = new System.Drawing.Size(814, 548);
-            this.visual_settings.TabIndex = 3;
-            // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.AccessibleName = "personalaty settings";
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel6, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel9, 1, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.Padding = new System.Windows.Forms.Padding(20);
-            this.tableLayoutPanel5.RowCount = 1;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 508F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(814, 548);
-            this.tableLayoutPanel5.TabIndex = 2;
-            // 
-            // tableLayoutPanel6
-            // 
-            this.tableLayoutPanel6.ColumnCount = 2;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Controls.Add(this.del_personalatys_visual, 1, 2);
-            this.tableLayoutPanel6.Controls.Add(this.del_personalatys_auto, 0, 2);
-            this.tableLayoutPanel6.Controls.Add(this.list_personalatys_visual, 0, 1);
-            this.tableLayoutPanel6.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(24, 25);
-            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 3;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(224, 498);
-            this.tableLayoutPanel6.TabIndex = 3;
-            // 
-            // del_personalatys_visual
-            // 
-            this.del_personalatys_visual.AccessibleName = "del personalaty";
-            this.del_personalatys_visual.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.del_personalatys_visual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.del_personalatys_visual.ForeColor = System.Drawing.Color.White;
-            this.del_personalatys_visual.Location = new System.Drawing.Point(115, 450);
-            this.del_personalatys_visual.Name = "del_personalatys_visual";
-            this.del_personalatys_visual.Size = new System.Drawing.Size(106, 45);
-            this.del_personalatys_visual.TabIndex = 1;
-            this.del_personalatys_visual.Text = "Delete";
-            this.del_personalatys_visual.UseVisualStyleBackColor = true;
-            this.del_personalatys_visual.Click += new System.EventHandler(this.del_personalaty_Click);
-            // 
-            // del_personalatys_auto
-            // 
-            this.del_personalatys_auto.AccessibleDescription = "";
-            this.del_personalatys_auto.AccessibleName = "add personalaty";
-            this.del_personalatys_auto.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.del_personalatys_auto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.del_personalatys_auto.ForeColor = System.Drawing.Color.White;
-            this.del_personalatys_auto.Location = new System.Drawing.Point(3, 450);
-            this.del_personalatys_auto.Name = "del_personalatys_auto";
-            this.del_personalatys_auto.Size = new System.Drawing.Size(106, 45);
-            this.del_personalatys_auto.TabIndex = 0;
-            this.del_personalatys_auto.Text = "Add";
-            this.del_personalatys_auto.UseVisualStyleBackColor = true;
-            this.del_personalatys_auto.Click += new System.EventHandler(this.add_personalaty_Click);
-            // 
-            // list_personalatys_visual
-            // 
-            this.list_personalatys_visual.AccessibleName = "all personalatys";
-            this.list_personalatys_visual.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(59)))), ((int)(((byte)(115)))));
-            this.tableLayoutPanel6.SetColumnSpan(this.list_personalatys_visual, 2);
-            this.list_personalatys_visual.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.list_personalatys_visual.ForeColor = System.Drawing.Color.White;
-            this.list_personalatys_visual.FormattingEnabled = true;
-            this.list_personalatys_visual.ItemHeight = 20;
-            this.list_personalatys_visual.Location = new System.Drawing.Point(3, 52);
-            this.list_personalatys_visual.Name = "list_personalatys_visual";
-            this.list_personalatys_visual.Size = new System.Drawing.Size(218, 392);
-            this.list_personalatys_visual.TabIndex = 0;
-            this.list_personalatys_visual.SelectedIndexChanged += new System.EventHandler(this.list_personalatys_visual_SelectedIndexChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.tableLayoutPanel6.SetColumnSpan(this.label4, 2);
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(4, 0);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(216, 49);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Personalities";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // sys_settings
             // 
             this.sys_settings.AccessibleName = "sys settings";
@@ -1354,25 +1373,6 @@
             this.support_settings.Size = new System.Drawing.Size(814, 548);
             this.support_settings.TabIndex = 5;
             // 
-            // tableLayoutPanel9
-            // 
-            this.tableLayoutPanel9.ColumnCount = 2;
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(255, 23);
-            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
-            this.tableLayoutPanel9.RowCount = 7;
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(536, 502);
-            this.tableLayoutPanel9.TabIndex = 4;
-            // 
             // ui
             // 
             this.AccessibleName = "ui";
@@ -1404,16 +1404,16 @@
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.main_content_container.ResumeLayout(false);
+            this.visual_settings.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
             this.automation_settings.ResumeLayout(false);
             this.layout_automation.ResumeLayout(false);
             this.automation_pannel_personalatys.ResumeLayout(false);
             this.automation_pannel_personalatys.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
-            this.visual_settings.ResumeLayout(false);
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel6.ResumeLayout(false);
-            this.tableLayoutPanel6.PerformLayout();
             this.sys_settings.ResumeLayout(false);
             this.sys_personalaty_table.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
