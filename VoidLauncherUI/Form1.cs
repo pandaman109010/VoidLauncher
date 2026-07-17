@@ -14,28 +14,39 @@ namespace VoidLauncherUI
 {
     public partial class ui : Form
     {
-    // holds the config data in the JSON file
-    private RootConfig fullConfig; 
+        // json config data
+        private RootConfig fullConfig; 
 
-    // holds config data in JSON file
-    private List<Personality> personalitiesList = new List<Personality>(); 
+        // list of all personalities
+        private List<Personality> personalitiesList = new List<Personality>(); 
 
-    // tracks personality being edited on screen
-    private Personality currentPersonality;
+        // current active personality
+        private Personality currentPersonality;
+
+        public ui()
+        {
+            InitializeComponent();
+            
+            // force volume trackbar range so it doesn't crash on high volumes
+            volume.Minimum = 0;
+            volume.Maximum = 100;
+
+            LoadPersonalitiesFromJson();
+        }
 
         private string GetConfigFilePath()
         {
-            // Gets the folder where the UI is currently running
+            // get current folder of the exe
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            // 1. checks if the config file is right next to the UI
+            // check if json is right next to the exe first
             string productionPath = Path.Combine(exeDirectory, "scripts", "config.json");
             if (File.Exists(productionPath))
             {
                 return productionPath;
             }
 
-            // 2. if not step up dir and chek for it each time
+            // go up directories to find scripts/config.json
             DirectoryInfo dir = new DirectoryInfo(exeDirectory);
             while (dir != null)
             {
@@ -44,10 +55,10 @@ namespace VoidLauncherUI
                 {
                     return potentialPath; 
                 }
-                dir = dir.Parent; // Move up one folder level each time
+                dir = dir.Parent; 
             }
 
-            // Fallback default path if it can't find it anywhere
+            // fallback if not found anywhere else
             return Path.Combine(exeDirectory, "scripts", "config.json");
         }
 
@@ -62,24 +73,37 @@ namespace VoidLauncherUI
                     string jsonContent = File.ReadAllText(jsonPath);
                     fullConfig = JsonConvert.DeserializeObject<RootConfig>(jsonContent);
 
-                    if (fullConfig != null && fullConfig.Personalities != null)
+                    if (fullConfig != null)
                     {
-                        // fill the list inishaly
-                        personalitiesList = fullConfig.Personalities;
-
-                        // clear the list to avoid duplicates if reloading
-                        all_personalatys.Items.Clear();
-                        all_personalatys_auto.Items.Clear();
-                        list_personalatys_visual.Items.Clear();
-                        list_personalatys_sys.Items.Clear();
-
-                        // Loop through your JSON array and add the names ("Study", "Gaming") into all ListBoxes
-                        foreach (var personality in personalitiesList)
+                        // load global features
+                        if (fullConfig.FeatureSmartSuggestions != null)
                         {
-                            all_personalatys.Items.Add(personality.Name);
-                            all_personalatys_auto.Items.Add(personality.Name);
-                            list_personalatys_visual.Items.Add(personality.Name);
-                            list_personalatys_sys.Items.Add(personality.Name);
+                            smart_suggestion.Checked = fullConfig.FeatureSmartSuggestions.Enabled;
+                        }
+                        if (fullConfig.FeatureRamMonitor != null)
+                        {
+                            Ram_mon.Checked = fullConfig.FeatureRamMonitor.Enabled;
+                        }
+
+                        if (fullConfig.Personalities != null)
+                        {
+                            // load personalities to list
+                            personalitiesList = fullConfig.Personalities;
+
+                            // clear listboxes so we don't get duplicates
+                            all_personalatys.Items.Clear();
+                            all_personalatys_auto.Items.Clear();
+                            list_personalatys_visual.Items.Clear();
+                            list_personalatys_sys.Items.Clear();
+
+                            // add names to all listboxes
+                            foreach (var personality in personalitiesList)
+                            {
+                                all_personalatys.Items.Add(personality.Name);
+                                all_personalatys_auto.Items.Add(personality.Name);
+                                list_personalatys_visual.Items.Add(personality.Name);
+                                list_personalatys_sys.Items.Add(personality.Name);
+                            }
                         }
                     }
                 }
@@ -94,105 +118,93 @@ namespace VoidLauncherUI
             }
         }
 
-        public ui()
-        {
-            InitializeComponent();
-            LoadPersonalitiesFromJson();
-            
-        }
-
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void personalaty_setings_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void menu_personalaty_settings_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void add_app_personalaty_Click(object sender, EventArgs e)
-        {  //opens file exploer to select an aplication
+        {  
+            // open file dialog to choose an exe
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Applications (*.exe)|*.exe|All files (*.*)|*.*";
-            openFileDialog.Title = "Select an Application for your personalaty";
+            openFileDialog.Title = "Select an Application for your personality";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // Automatically adds the aplication to the listbox
+                // add it to the apps list
                 list_aplications_personalaty.Items.Add(openFileDialog.FileName);
             }
         }
 
         private void remove_app_personalaty_Click(object sender, EventArgs e)
         {
-            // Check if the user has actually selected an item in the list
+            // make sure something is selected
             if (list_aplications_personalaty.SelectedIndex != -1)
             {
-                // Remove the selected item from the ListBox
+                // remove selected application
                 list_aplications_personalaty.Items.RemoveAt(list_aplications_personalaty.SelectedIndex);
             }
             else
             {
-                // Alert the user if they clicked remove without choosing an item
+                // show warning if they didn't select anything
                 MessageBox.Show("Please select an item from the list to remove.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void remove_link_personalaty_Click(object sender, EventArgs e)
         {
-            // Check if the user has actually selected an item in the list
+            // make sure something is selected
             if (list_websites_personalaty.SelectedIndex != -1)
             {
-                // Remove the selected item from the ListBox
+                // remove selected website
                 list_websites_personalaty.Items.RemoveAt(list_websites_personalaty.SelectedIndex);
             }
             else
             {
-                // Optional: Alert the user if they clicked remove without choosing an item
+                // warning if nothing is selected
                 MessageBox.Show("Please select an item from the list to remove.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void add_link_personalaty_Click(object sender, EventArgs e)
         {
-            // 1. Grab the text from the text box and remove any accidental spaces at the beginning/end
-                string url = personalaty_web_feald.Text.Trim();
+            // get url text and trim whitespace
+            string url = personalaty_web_feald.Text.Trim();
 
-                // 2. Make sure they actually typed something before clicking add
-                if (string.IsNullOrEmpty(url))
-                {
-                    MessageBox.Show("Please enter a website URL first.", "Empty Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
+            // error out if text field is empty
+            if (string.IsNullOrEmpty(url))
+            {
+                MessageBox.Show("Please enter a website URL first.", "Empty Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                // 3. Smart Formatting: If they typed "www.website.com", turn it into "https://www.website.com"
-                // This makes sure it safely launches in their browser later on!
-                if (!url.StartsWith("http://") && !url.StartsWith("https://"))
-                {
-                    url = "https://" + url;
-                }
+            // add https prefix if missing
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            {
+                url = "https://" + url;
+            }
 
-                // 4. Add the URL straight into the website ListBox
-                list_websites_personalaty.Items.Add(url);
+            // add url to listbox
+            list_websites_personalaty.Items.Add(url);
 
-                // 5. Clear out the text box so it's instantly ready for the next link they want to type
-                personalaty_web_feald.Clear();
+            // clear input field for next one
+            personalaty_web_feald.Clear();
         }
 
         private void all_personalatys_SelectedIndexChanged(object sender, EventArgs e)
@@ -209,9 +221,10 @@ namespace VoidLauncherUI
 
         private void LoadPersonalityData(int selectedIndex)
         {
+            if (personalitiesList == null || selectedIndex < 0 || selectedIndex >= personalitiesList.Count) return;
             currentPersonality = personalitiesList[selectedIndex];
 
-            // --- PANEL 1: PERSONALITIES VIEW ---
+            // load personality panel info
             list_aplications_personalaty.Items.Clear();
             string dynamicPaths = currentPersonality.AppsToLaunch?.Paths;
             if (!string.IsNullOrEmpty(dynamicPaths))
@@ -229,8 +242,7 @@ namespace VoidLauncherUI
             personalaty_name_feld.Text = currentPersonality.Name;
             enable_personalaty.Checked = currentPersonality.Enabled;
 
-            // --- PANEL 2: AUTOMATION VIEW & SWITCHES ---
-            // 1. App and Tab Checkboxes
+            // load automation tab settings
             if (currentPersonality.AppsToLaunch != null)
             {
                 enable_apps.Checked = currentPersonality.AppsToLaunch.Enabled;
@@ -249,10 +261,10 @@ namespace VoidLauncherUI
                 enable_tabs.Checked = false;
             }
 
-            // 2. Trigger Shortcut TextBox
+            // update trigger hotkey
             trigger.Text = currentPersonality.TriggerShortcut ?? "";
 
-            // 3. Virtual Desktop Checkbox & Virtual Desktop Name TextBox
+            // update virtual desktop settings
             if (currentPersonality.VirtualDesktopSwitch != null)
             {
                 enable_Virtual_destop.Checked = currentPersonality.VirtualDesktopSwitch.Enabled;
@@ -264,102 +276,102 @@ namespace VoidLauncherUI
                 Virtual_destop_name.Text = "";
             }
 
-            // --- PANEL 3: SYSTEM SETTINGS (PRE-WIRED FOR LATER) ---
+            // load system settings
             if (currentPersonality.SystemSettingsAutomation != null)
             {
-                // chk_sys_automation_enabled.Checked = currentPersonality.SystemSettingsAutomation.Enabled;
-                // num_volume_level.Value = currentPersonality.SystemSettingsAutomation.VolumeLevel;
-                // chk_dnd_enabled.Checked = currentPersonality.SystemSettingsAutomation.DoNotDisturb;
+                int volVal = currentPersonality.SystemSettingsAutomation.VolumeLevel;
+                volume.Value = Math.Max(0, Math.Min(100, volVal));
+                DnD.Checked = currentPersonality.SystemSettingsAutomation.DoNotDisturb;
             }
-
-            if (currentPersonality.WallpaperSwitch != null)
+            else
             {
-                // chk_wallpaper_enabled.Checked = currentPersonality.WallpaperSwitch.Enabled;
-                // txt_wallpaper_path.Text = currentPersonality.WallpaperSwitch.WallpaperPath;
+                volume.Value = 20;
+                DnD.Checked = false;
             }
 
-            // --- PANEL 4: VISUAL SETTINGS FLOW ---
-            list_wallpapers.Items.Clear(); // Clear the listbox first so it doesn't accumulate entries
+            // load wallpaper settings
+            list_wallpapers.Items.Clear(); 
 
             if (currentPersonality.WallpaperSwitch != null)
             {
                 enable_wallpaper.Checked = currentPersonality.WallpaperSwitch.Enabled;
                 
-                // Add the wallpaper path to your ListBox if it's not empty
                 if (!string.IsNullOrEmpty(currentPersonality.WallpaperSwitch.WallpaperPath))
                 {
                     list_wallpapers.Items.Add(currentPersonality.WallpaperSwitch.WallpaperPath);
                 }
-                
-                // If you have a text field displaying the current path, uncomment the next line:
-                // txt_wallpaper_path.Text = currentPersonality.WallpaperSwitch.WallpaperPath ?? "";
             }
             else
             {
                 enable_wallpaper.Checked = false;
-                // txt_wallpaper_path.Text = "";
             }
         }
 
         private void save_pesonalatys_Click_1(object sender, EventArgs e)
         {
-            SaveSettings(); //idk what is the right one and for some random reason this works so i leave it :D
+            SaveSettings(); 
         }
-
-        // Separate reusable helper to write the FULL preserved config back to disk
 
         private void SaveSettings()
         {
             if (currentPersonality == null || fullConfig == null) return;
 
-            // 1. Collect data from Personalities tab
-            currentPersonality.AppsToLaunch.Paths = string.Join(", ", list_aplications_personalaty.Items.Cast<string>());
-            currentPersonality.TabsToOpen.Urls = string.Join(", ", list_websites_personalaty.Items.Cast<string>());
-            currentPersonality.Name = personalaty_name_feld.Text.Trim();
-            currentPersonality.Enabled = enable_personalaty.Checked;
-
-            if (currentPersonality.VirtualDesktopSwitch == null)
-            {
-                currentPersonality.VirtualDesktopSwitch = new VirtualDesktopSwitchClass { TargetDesktopName = "" };
-            }
-            currentPersonality.VirtualDesktopSwitch.Enabled = enable_Virtual_destop.Checked;
-
+            // save personality general settings
             if (currentPersonality.AppsToLaunch == null)
             {
                 currentPersonality.AppsToLaunch = new AppsToLaunchClass();
             }
+            currentPersonality.AppsToLaunch.Paths = string.Join(", ", list_aplications_personalaty.Items.Cast<string>());
             currentPersonality.AppsToLaunch.Enabled = enable_apps.Checked;
 
             if (currentPersonality.TabsToOpen == null)
             {
                 currentPersonality.TabsToOpen = new TabsToOpenClass();
             }
+            currentPersonality.TabsToOpen.Urls = string.Join(", ", list_websites_personalaty.Items.Cast<string>());
             currentPersonality.TabsToOpen.Enabled = enable_tabs.Checked;
 
-            // 2. Collect data from Automation tab (Safety checks + templates ready for your controls)
-            
-            // === FIX 1: Save the shortcut key sequence from the correct text field ===
-            currentPersonality.TriggerShortcut = trigger.Text.Trim();
+            currentPersonality.Name = personalaty_name_feld.Text.Trim();
+            currentPersonality.Enabled = enable_personalaty.Checked;
 
-            // === FIX 2: Save the virtual desktop target name from the correct text field ===
+            // save automation tab settings
+            if (currentPersonality.VirtualDesktopSwitch == null)
+            {
+                currentPersonality.VirtualDesktopSwitch = new VirtualDesktopSwitchClass { TargetDesktopName = "" };
+            }
+            currentPersonality.VirtualDesktopSwitch.Enabled = enable_Virtual_destop.Checked;
             currentPersonality.VirtualDesktopSwitch.TargetDesktopName = Virtual_destop_name.Text.Trim();
 
+            currentPersonality.TriggerShortcut = trigger.Text.Trim();
+
+            // save system settings
             if (currentPersonality.SystemSettingsAutomation == null)
             {
                 currentPersonality.SystemSettingsAutomation = new SystemSettingsAutomationClass();
             }
-            // UNCOMMENT THESE WHEN YOUR CONTROLS ARE READY:
-            // currentPersonality.SystemSettingsAutomation.Enabled = chk_sys_automation_enabled.Checked;
-            // currentPersonality.SystemSettingsAutomation.VolumeLevel = (int)num_volume_level.Value;
-            // currentPersonality.SystemSettingsAutomation.DofNotDisturb = chk_dnd_enabled.Checked;
+            currentPersonality.SystemSettingsAutomation.DoNotDisturb = DnD.Checked;
+            currentPersonality.SystemSettingsAutomation.VolumeLevel = volume.Value;
 
+            // save global features
+            if (fullConfig.FeatureSmartSuggestions == null)
+            {
+                fullConfig.FeatureSmartSuggestions = new FeatureSmartSuggestionsClass { ScanIntervalMinutes = 5 };
+            }
+            fullConfig.FeatureSmartSuggestions.Enabled = smart_suggestion.Checked;
+
+            if (fullConfig.FeatureRamMonitor == null)
+            {
+                fullConfig.FeatureRamMonitor = new FeatureRamMonitorClass { MaxAllowedPercentage = 85 };
+            }
+            fullConfig.FeatureRamMonitor.Enabled = Ram_mon.Checked;
+
+            // save wallpaper path
             if (currentPersonality.WallpaperSwitch == null)
             {
                 currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
             }
             currentPersonality.WallpaperSwitch.Enabled = enable_wallpaper.Checked;
 
-            // Grab the path straight out of the listbox if there is an item in it
             if (list_wallpapers.Items.Count > 0)
             {
                 currentPersonality.WallpaperSwitch.WallpaperPath = list_wallpapers.Items[0].ToString();
@@ -369,8 +381,7 @@ namespace VoidLauncherUI
                 currentPersonality.WallpaperSwitch.WallpaperPath = "";
             }
 
-
-            // 3. Update all visual listbox rows across all panels
+            // sync updated personality name across all lists
             int selectedIndex = all_personalatys.SelectedIndex;
             if (selectedIndex != -1)
             {
@@ -380,7 +391,7 @@ namespace VoidLauncherUI
                 list_personalatys_sys.Items[selectedIndex] = currentPersonality.Name;
             }
             
-            // 4. Save everything out to the single JSON file
+            // write everything back to config.json
             try
             {
                 string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
@@ -395,7 +406,7 @@ namespace VoidLauncherUI
 
         private void add_personalaty_Click(object sender, EventArgs e)
         {
-           if (fullConfig == null || personalitiesList == null) return;
+            if (fullConfig == null || personalitiesList == null) return;
 
             Personality newPersonality = new Personality
             {
@@ -405,11 +416,9 @@ namespace VoidLauncherUI
                 AppsToLaunch = new AppsToLaunchClass { Enabled = true, Paths = @"C:\Program Files\some-app.exe" },
                 TabsToOpen = new TabsToOpenClass { Enabled = false, Urls = "https://www.google.com" },
                 VirtualDesktopSwitch = new VirtualDesktopSwitchClass { Enabled = false, TargetDesktopName = "new-desktop" },
-                
-                // Uses our clean new classes for consistent initialization defaults!
                 SystemSettingsAutomation = new SystemSettingsAutomationClass
                 {
-                    Enabled = false,
+                    Enabled = true, 
                     VolumeLevel = 20,
                     DoNotDisturb = true
                 },
@@ -443,27 +452,23 @@ namespace VoidLauncherUI
         {
             int selectedIndex = all_personalatys.SelectedIndex;
 
-            // 1. Double check they have an item highlighted
             if (selectedIndex == -1)
             {
                 MessageBox.Show("Please select a personality from the list to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Safety confirmation prompt
             var confirmResult = MessageBox.Show($"Are you sure you want to delete '{personalitiesList[selectedIndex].Name}'?", 
                                                  "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             
             if (confirmResult != DialogResult.Yes) return;
 
-            // 3. Remove it from your local collections
             personalitiesList.RemoveAt(selectedIndex);
             all_personalatys.Items.RemoveAt(selectedIndex);
             all_personalatys_auto.Items.RemoveAt(selectedIndex);
             list_personalatys_visual.Items.RemoveAt(selectedIndex);
             list_personalatys_sys.Items.RemoveAt(selectedIndex);
 
-            // 4. Update the JSON file right away to commit the deletion
             try
             {
                 string updatedJson = JsonConvert.SerializeObject(fullConfig, Formatting.Indented);
@@ -474,7 +479,6 @@ namespace VoidLauncherUI
                 MessageBox.Show($"Failed to sync file deletion: {ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            // 5. UI Cleanup: Select another profile if any remain, otherwise empty the screen
             if (all_personalatys.Items.Count > 0)
             {
                 all_personalatys.SelectedIndex = Math.Min(selectedIndex, all_personalatys.Items.Count - 1);
@@ -515,28 +519,22 @@ namespace VoidLauncherUI
             SwitchSettingsView(support_settings);
         }
     
-        //switch between setting panels
         private void SwitchSettingsView(Panel panelToShow)
         {
             if (panelToShow == null) return;
-
-            // Snaps the selected panel to the top of the stack inside main_content_container
             panelToShow.BringToFront();
         }
 
         private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void save_web_Click(object sender, EventArgs e)
         {
-
         }
 
         private void save_apps_Click(object sender, EventArgs e)
         {
-
         }
 
         private void list_personalatys_visual_SelectedIndexChanged(object sender, EventArgs e)
@@ -553,115 +551,117 @@ namespace VoidLauncherUI
 
         private void enable_tabs_CheckedChanged(object sender, EventArgs e)
         {
-
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-
         }
 
         private void enable_personalaty_CheckedChanged(object sender, EventArgs e)
         {
-
         }
 
         private void textBox3_TextChanged_1(object sender, EventArgs e)
         {
-            //this is the trigger, it wont populate the names :(
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            //this is enable the virtual inverment
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            //this is name the virtual inverment
         }
 
         private void tableLayoutPanel7_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void visual_settins_panel_Paint(object sender, PaintEventArgs e)
         {
-            
         }
 
         private void label18_Click(object sender, EventArgs e)
         {
-
         }
 
-
-
-    private void enable_wallpaper_CheckedChanged(object sender, EventArgs e)
-    {
-        if (currentPersonality == null) return;
-
-        if (currentPersonality.WallpaperSwitch == null)
+        private void enable_wallpaper_CheckedChanged(object sender, EventArgs e)
         {
-            currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
-        }
-        currentPersonality.WallpaperSwitch.Enabled = enable_wallpaper.Checked;
-    }
+            if (currentPersonality == null) return;
 
-    private void add_wallpaper_Click(object sender, EventArgs e)
-    {
-        if (currentPersonality == null)
-        {
-            MessageBox.Show("Please select a personality first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
-        using (OpenFileDialog openFileDialog = new OpenFileDialog())
-        {
-            openFileDialog.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*";
-            openFileDialog.Title = "Select a Background Wallpaper";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (currentPersonality.WallpaperSwitch == null)
             {
-                if (currentPersonality.WallpaperSwitch == null)
+                currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+            }
+            currentPersonality.WallpaperSwitch.Enabled = enable_wallpaper.Checked;
+        }
+
+        private void add_wallpaper_Click(object sender, EventArgs e)
+        {
+            if (currentPersonality == null)
+            {
+                MessageBox.Show("Please select a personality first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*";
+                openFileDialog.Title = "Select a Background Wallpaper";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+                    if (currentPersonality.WallpaperSwitch == null)
+                    {
+                        currentPersonality.WallpaperSwitch = new WallpaperSwitchClass();
+                    }
+                    currentPersonality.WallpaperSwitch.WallpaperPath = openFileDialog.FileName;
+                    
+                    list_wallpapers.Items.Clear();
+                    list_wallpapers.Items.Add(openFileDialog.FileName);
+                    
+                    MessageBox.Show($"Wallpaper path selected:\n{openFileDialog.FileName}\n\nDon't forget to click Save Changes!", "Path Set", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                currentPersonality.WallpaperSwitch.WallpaperPath = openFileDialog.FileName;
-                
-                // --- Update the ListBox instantly ---
-                list_wallpapers.Items.Clear();
-                list_wallpapers.Items.Add(openFileDialog.FileName);
-                
-                MessageBox.Show($"Wallpaper path selected:\n{openFileDialog.FileName}\n\nDon't forget to click Save Changes!", "Path Set", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-    }
 
-
-
-    private void remove_wallpaper_Click(object sender, EventArgs e)
-    {
-        if (currentPersonality == null) return;
-
-        if (currentPersonality.WallpaperSwitch != null)
+        private void remove_wallpaper_Click(object sender, EventArgs e)
         {
-            currentPersonality.WallpaperSwitch.WallpaperPath = "";
-            MessageBox.Show("Wallpaper path cleared. Click Save Changes to commit.", "Cleared", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (currentPersonality == null) return;
+
+            if (currentPersonality.WallpaperSwitch != null)
+            {
+                currentPersonality.WallpaperSwitch.WallpaperPath = "";
+                list_wallpapers.Items.Clear(); // clear listbox visually
+                MessageBox.Show("Wallpaper path cleared. Click Save Changes to commit.", "Cleared", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
-    }
 
         private void list_wallpapers_SelectedIndexChanged(object sender, EventArgs e)
         {
+        }
 
+        private void smart_suggestion_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void Ram_mon_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void volume_Scroll(object sender, EventArgs e)
+        {
+        }
+
+        private void DnD_CheckedChanged(object sender, EventArgs e)
+        {
         }
     }
+
     public class RootConfig
     {
         [JsonProperty("global-settings")]
@@ -670,9 +670,32 @@ namespace VoidLauncherUI
         [JsonProperty("personalities")]
         public List<Personality> Personalities { get; set; }
 
-        // CATCH-ALL: Keeps ram-monitor, smart-suggestions, etc. completely safe
+        [JsonProperty("feature-ram-monitor")]
+        public FeatureRamMonitorClass FeatureRamMonitor { get; set; }
+
+        [JsonProperty("feature-smart-suggestions")]
+        public FeatureSmartSuggestionsClass FeatureSmartSuggestions { get; set; }
+
         [JsonExtensionData]
         public Dictionary<string, object> AdditionalData { get; set; }
+    }
+
+    public class FeatureRamMonitorClass
+    {
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("max-allowed-percentage")]
+        public int MaxAllowedPercentage { get; set; }
+    }
+
+    public class FeatureSmartSuggestionsClass
+    {
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("scan-interval-minutes")]
+        public int ScanIntervalMinutes { get; set; }
     }
 
     public class Personality
@@ -695,7 +718,6 @@ namespace VoidLauncherUI
         [JsonProperty("virtual-desktop-switch")]
         public VirtualDesktopSwitchClass VirtualDesktopSwitch { get; set; }
 
-        // NEW: Strong types for your Automation & Wallpaper settings!
         [JsonProperty("system-settings-automation")]
         public SystemSettingsAutomationClass SystemSettingsAutomation { get; set; }
 
@@ -706,7 +728,6 @@ namespace VoidLauncherUI
         public Dictionary<string, object> AdditionalData { get; set; }
     }
 
-    // Class structure matching the automation JSON format
     public class SystemSettingsAutomationClass
     {
         [JsonProperty("enabled")]
@@ -719,7 +740,6 @@ namespace VoidLauncherUI
         public bool DoNotDisturb { get; set; }
     }
 
-    // Class structure matching the wallpaper JSON format
     public class WallpaperSwitchClass
     {
         [JsonProperty("enabled")]

@@ -72,6 +72,27 @@
             this.personalaty_web_feald = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.main_content_container = new System.Windows.Forms.Panel();
+            this.sys_settings = new System.Windows.Forms.Panel();
+            this.sys_personalaty_table = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.del_personalaty_sys = new System.Windows.Forms.Button();
+            this.del_personalatys_sys = new System.Windows.Forms.Button();
+            this.list_personalatys_sys = new System.Windows.Forms.ListBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.DnD = new System.Windows.Forms.CheckBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.Ram_mon = new System.Windows.Forms.CheckBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.smart_suggestion = new System.Windows.Forms.CheckBox();
+            this.volume = new System.Windows.Forms.TrackBar();
             this.visual_settings = new System.Windows.Forms.Panel();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
@@ -107,13 +128,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.sys_settings = new System.Windows.Forms.Panel();
-            this.sys_personalaty_table = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.del_personalaty_sys = new System.Windows.Forms.Button();
-            this.del_personalatys_sys = new System.Windows.Forms.Button();
-            this.list_personalatys_sys = new System.Windows.Forms.ListBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.support_settings = new System.Windows.Forms.Panel();
             this.menu_selecter_pannel.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -128,6 +142,11 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.main_content_container.SuspendLayout();
+            this.sys_settings.SuspendLayout();
+            this.sys_personalaty_table.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
+            this.tableLayoutPanel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.volume)).BeginInit();
             this.visual_settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
@@ -137,9 +156,6 @@
             this.layout_automation.SuspendLayout();
             this.automation_pannel_personalatys.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            this.sys_settings.SuspendLayout();
-            this.sys_personalaty_table.SuspendLayout();
-            this.tableLayoutPanel8.SuspendLayout();
             this.SuspendLayout();
             // 
             // menu_selecter_pannel
@@ -858,16 +874,356 @@
             // main_content_container
             // 
             this.main_content_container.AccessibleName = "main contex contaner";
-            this.main_content_container.Controls.Add(this.visual_settings);
-            this.main_content_container.Controls.Add(this.personalaty_settings);
-            this.main_content_container.Controls.Add(this.automation_settings);
             this.main_content_container.Controls.Add(this.sys_settings);
+            this.main_content_container.Controls.Add(this.personalaty_settings);
+            this.main_content_container.Controls.Add(this.visual_settings);
+            this.main_content_container.Controls.Add(this.automation_settings);
             this.main_content_container.Controls.Add(this.support_settings);
             this.main_content_container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.main_content_container.Location = new System.Drawing.Point(165, 0);
             this.main_content_container.Name = "main_content_container";
             this.main_content_container.Size = new System.Drawing.Size(543, 356);
             this.main_content_container.TabIndex = 2;
+            // 
+            // sys_settings
+            // 
+            this.sys_settings.AccessibleName = "sys settings";
+            this.sys_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
+            this.sys_settings.Controls.Add(this.sys_personalaty_table);
+            this.sys_settings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sys_settings.Location = new System.Drawing.Point(0, 0);
+            this.sys_settings.Margin = new System.Windows.Forms.Padding(2);
+            this.sys_settings.Name = "sys_settings";
+            this.sys_settings.Size = new System.Drawing.Size(543, 356);
+            this.sys_settings.TabIndex = 4;
+            // 
+            // sys_personalaty_table
+            // 
+            this.sys_personalaty_table.AccessibleName = "personalaty settings";
+            this.sys_personalaty_table.ColumnCount = 2;
+            this.sys_personalaty_table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.sys_personalaty_table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.sys_personalaty_table.Controls.Add(this.tableLayoutPanel8, 0, 0);
+            this.sys_personalaty_table.Controls.Add(this.tableLayoutPanel10, 1, 0);
+            this.sys_personalaty_table.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sys_personalaty_table.Location = new System.Drawing.Point(0, 0);
+            this.sys_personalaty_table.Margin = new System.Windows.Forms.Padding(2);
+            this.sys_personalaty_table.Name = "sys_personalaty_table";
+            this.sys_personalaty_table.Padding = new System.Windows.Forms.Padding(13);
+            this.sys_personalaty_table.RowCount = 1;
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.sys_personalaty_table.Size = new System.Drawing.Size(543, 356);
+            this.sys_personalaty_table.TabIndex = 2;
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.del_personalaty_sys, 1, 2);
+            this.tableLayoutPanel8.Controls.Add(this.del_personalatys_sys, 0, 2);
+            this.tableLayoutPanel8.Controls.Add(this.list_personalatys_sys, 0, 1);
+            this.tableLayoutPanel8.Controls.Add(this.label6, 0, 0);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(16, 16);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 3;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(149, 324);
+            this.tableLayoutPanel8.TabIndex = 3;
+            // 
+            // del_personalaty_sys
+            // 
+            this.del_personalaty_sys.AccessibleName = "del personalaty";
+            this.del_personalaty_sys.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.del_personalaty_sys.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.del_personalaty_sys.ForeColor = System.Drawing.Color.White;
+            this.del_personalaty_sys.Location = new System.Drawing.Point(76, 293);
+            this.del_personalaty_sys.Margin = new System.Windows.Forms.Padding(2);
+            this.del_personalaty_sys.Name = "del_personalaty_sys";
+            this.del_personalaty_sys.Size = new System.Drawing.Size(71, 29);
+            this.del_personalaty_sys.TabIndex = 1;
+            this.del_personalaty_sys.Text = "Delete";
+            this.del_personalaty_sys.UseVisualStyleBackColor = true;
+            this.del_personalaty_sys.Click += new System.EventHandler(this.del_personalaty_Click);
+            // 
+            // del_personalatys_sys
+            // 
+            this.del_personalatys_sys.AccessibleDescription = "";
+            this.del_personalatys_sys.AccessibleName = "add personalaty";
+            this.del_personalatys_sys.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.del_personalatys_sys.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.del_personalatys_sys.ForeColor = System.Drawing.Color.White;
+            this.del_personalatys_sys.Location = new System.Drawing.Point(2, 293);
+            this.del_personalatys_sys.Margin = new System.Windows.Forms.Padding(2);
+            this.del_personalatys_sys.Name = "del_personalatys_sys";
+            this.del_personalatys_sys.Size = new System.Drawing.Size(70, 29);
+            this.del_personalatys_sys.TabIndex = 0;
+            this.del_personalatys_sys.Text = "Add";
+            this.del_personalatys_sys.UseVisualStyleBackColor = true;
+            this.del_personalatys_sys.Click += new System.EventHandler(this.add_personalaty_Click);
+            // 
+            // list_personalatys_sys
+            // 
+            this.list_personalatys_sys.AccessibleName = "all personalatys";
+            this.list_personalatys_sys.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(59)))), ((int)(((byte)(115)))));
+            this.tableLayoutPanel8.SetColumnSpan(this.list_personalatys_sys, 2);
+            this.list_personalatys_sys.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_personalatys_sys.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.list_personalatys_sys.ForeColor = System.Drawing.Color.White;
+            this.list_personalatys_sys.FormattingEnabled = true;
+            this.list_personalatys_sys.ItemHeight = 25;
+            this.list_personalatys_sys.Location = new System.Drawing.Point(2, 34);
+            this.list_personalatys_sys.Margin = new System.Windows.Forms.Padding(2);
+            this.list_personalatys_sys.Name = "list_personalatys_sys";
+            this.list_personalatys_sys.Size = new System.Drawing.Size(145, 255);
+            this.list_personalatys_sys.TabIndex = 0;
+            this.list_personalatys_sys.SelectedIndexChanged += new System.EventHandler(this.list_personalatys_sys_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.tableLayoutPanel8.SetColumnSpan(this.label6, 2);
+            this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Location = new System.Drawing.Point(3, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(143, 32);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Personalities";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel10
+            // 
+            this.tableLayoutPanel10.ColumnCount = 2;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.Controls.Add(this.label27, 0, 8);
+            this.tableLayoutPanel10.Controls.Add(this.label26, 0, 7);
+            this.tableLayoutPanel10.Controls.Add(this.DnD, 1, 6);
+            this.tableLayoutPanel10.Controls.Add(this.label25, 0, 6);
+            this.tableLayoutPanel10.Controls.Add(this.label24, 0, 5);
+            this.tableLayoutPanel10.Controls.Add(this.Ram_mon, 1, 4);
+            this.tableLayoutPanel10.Controls.Add(this.label23, 0, 4);
+            this.tableLayoutPanel10.Controls.Add(this.label22, 0, 3);
+            this.tableLayoutPanel10.Controls.Add(this.label21, 0, 2);
+            this.tableLayoutPanel10.Controls.Add(this.label20, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.label19, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.smart_suggestion, 1, 2);
+            this.tableLayoutPanel10.Controls.Add(this.volume, 1, 8);
+            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(171, 16);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 9;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.04F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.99F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.5F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.99F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.5F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.99F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.5F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.99F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.5F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(356, 324);
+            this.tableLayoutPanel10.TabIndex = 4;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label27.ForeColor = System.Drawing.Color.White;
+            this.label27.Location = new System.Drawing.Point(0, 268);
+            this.label27.Margin = new System.Windows.Forms.Padding(0);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(178, 56);
+            this.label27.TabIndex = 11;
+            this.label27.Text = "Enable?";
+            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.label26, 2);
+            this.label26.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.label26.ForeColor = System.Drawing.Color.Silver;
+            this.label26.Location = new System.Drawing.Point(0, 252);
+            this.label26.Margin = new System.Windows.Forms.Padding(0);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(356, 16);
+            this.label26.TabIndex = 10;
+            this.label26.Text = "Set Volume: sets the device\'s volume per personalaty";
+            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // DnD
+            // 
+            this.DnD.AutoSize = true;
+            this.DnD.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DnD.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DnD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.DnD.ForeColor = System.Drawing.Color.White;
+            this.DnD.Location = new System.Drawing.Point(181, 202);
+            this.DnD.Name = "DnD";
+            this.DnD.Size = new System.Drawing.Size(172, 47);
+            this.DnD.TabIndex = 9;
+            this.DnD.Text = "Do Not Disturb";
+            this.DnD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.DnD.UseVisualStyleBackColor = true;
+            this.DnD.CheckedChanged += new System.EventHandler(this.DnD_CheckedChanged);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label25.ForeColor = System.Drawing.Color.White;
+            this.label25.Location = new System.Drawing.Point(0, 199);
+            this.label25.Margin = new System.Windows.Forms.Padding(0);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(178, 53);
+            this.label25.TabIndex = 8;
+            this.label25.Text = "Enable?";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.label24, 2);
+            this.label24.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.label24.ForeColor = System.Drawing.Color.Silver;
+            this.label24.Location = new System.Drawing.Point(0, 183);
+            this.label24.Margin = new System.Windows.Forms.Padding(0);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(356, 16);
+            this.label24.TabIndex = 7;
+            this.label24.Text = "Do Not Disturb: enables it in selected Personalitiy";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // Ram_mon
+            // 
+            this.Ram_mon.AutoSize = true;
+            this.Ram_mon.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Ram_mon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Ram_mon.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Ram_mon.ForeColor = System.Drawing.Color.White;
+            this.Ram_mon.Location = new System.Drawing.Point(181, 133);
+            this.Ram_mon.Name = "Ram_mon";
+            this.Ram_mon.Size = new System.Drawing.Size(172, 47);
+            this.Ram_mon.TabIndex = 6;
+            this.Ram_mon.Text = "Ram Monitor";
+            this.Ram_mon.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Ram_mon.UseVisualStyleBackColor = true;
+            this.Ram_mon.CheckedChanged += new System.EventHandler(this.Ram_mon_CheckedChanged);
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label23.ForeColor = System.Drawing.Color.Silver;
+            this.label23.Location = new System.Drawing.Point(0, 130);
+            this.label23.Margin = new System.Windows.Forms.Padding(0);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(178, 53);
+            this.label23.TabIndex = 5;
+            this.label23.Text = "Note:this feature effects all personalatys";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.label22, 2);
+            this.label22.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.label22.ForeColor = System.Drawing.Color.Silver;
+            this.label22.Location = new System.Drawing.Point(0, 114);
+            this.label22.Margin = new System.Windows.Forms.Padding(0);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(356, 16);
+            this.label22.TabIndex = 4;
+            this.label22.Text = "Ram Monitor: warns you if ram usage is high";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label21.ForeColor = System.Drawing.Color.Silver;
+            this.label21.Location = new System.Drawing.Point(0, 61);
+            this.label21.Margin = new System.Windows.Forms.Padding(0);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(178, 53);
+            this.label21.TabIndex = 2;
+            this.label21.Text = "Note: this feature recommends making new personalatys, not adding apps to old one" +
+    "s";
+            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.label20, 2);
+            this.label20.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.label20.ForeColor = System.Drawing.Color.Silver;
+            this.label20.Location = new System.Drawing.Point(0, 45);
+            this.label20.Margin = new System.Windows.Forms.Padding(0);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(356, 16);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "Smart suggestion: A tool that finds apps that work together";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.tableLayoutPanel10.SetColumnSpan(this.label19, 2);
+            this.label19.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.ForeColor = System.Drawing.Color.White;
+            this.label19.Location = new System.Drawing.Point(3, 0);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(350, 45);
+            this.label19.TabIndex = 0;
+            this.label19.Text = "system settings";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // smart_suggestion
+            // 
+            this.smart_suggestion.AutoSize = true;
+            this.smart_suggestion.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.smart_suggestion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.smart_suggestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.smart_suggestion.ForeColor = System.Drawing.Color.White;
+            this.smart_suggestion.Location = new System.Drawing.Point(181, 64);
+            this.smart_suggestion.Name = "smart_suggestion";
+            this.smart_suggestion.Size = new System.Drawing.Size(172, 47);
+            this.smart_suggestion.TabIndex = 3;
+            this.smart_suggestion.Text = "Smart Suggestion";
+            this.smart_suggestion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.smart_suggestion.UseVisualStyleBackColor = true;
+            this.smart_suggestion.CheckedChanged += new System.EventHandler(this.smart_suggestion_CheckedChanged);
+            // 
+            // volume
+            // 
+            this.volume.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.volume.Location = new System.Drawing.Point(181, 271);
+            this.volume.Name = "volume";
+            this.volume.Size = new System.Drawing.Size(172, 50);
+            this.volume.TabIndex = 12;
+            this.volume.Scroll += new System.EventHandler(this.volume_Scroll);
             // 
             // visual_settings
             // 
@@ -1467,123 +1823,6 @@
             this.label7.Text = "Automation Settings";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // sys_settings
-            // 
-            this.sys_settings.AccessibleName = "sys settings";
-            this.sys_settings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(20)))), ((int)(((byte)(57)))));
-            this.sys_settings.Controls.Add(this.sys_personalaty_table);
-            this.sys_settings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sys_settings.Location = new System.Drawing.Point(0, 0);
-            this.sys_settings.Margin = new System.Windows.Forms.Padding(2);
-            this.sys_settings.Name = "sys_settings";
-            this.sys_settings.Size = new System.Drawing.Size(543, 356);
-            this.sys_settings.TabIndex = 4;
-            // 
-            // sys_personalaty_table
-            // 
-            this.sys_personalaty_table.AccessibleName = "personalaty settings";
-            this.sys_personalaty_table.ColumnCount = 2;
-            this.sys_personalaty_table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.sys_personalaty_table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.sys_personalaty_table.Controls.Add(this.tableLayoutPanel8, 0, 0);
-            this.sys_personalaty_table.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sys_personalaty_table.Location = new System.Drawing.Point(0, 0);
-            this.sys_personalaty_table.Margin = new System.Windows.Forms.Padding(2);
-            this.sys_personalaty_table.Name = "sys_personalaty_table";
-            this.sys_personalaty_table.Padding = new System.Windows.Forms.Padding(13);
-            this.sys_personalaty_table.RowCount = 1;
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 330F));
-            this.sys_personalaty_table.Size = new System.Drawing.Size(543, 356);
-            this.sys_personalaty_table.TabIndex = 2;
-            // 
-            // tableLayoutPanel8
-            // 
-            this.tableLayoutPanel8.ColumnCount = 2;
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.Controls.Add(this.del_personalaty_sys, 1, 2);
-            this.tableLayoutPanel8.Controls.Add(this.del_personalatys_sys, 0, 2);
-            this.tableLayoutPanel8.Controls.Add(this.list_personalatys_sys, 0, 1);
-            this.tableLayoutPanel8.Controls.Add(this.label6, 0, 0);
-            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel8.Location = new System.Drawing.Point(16, 16);
-            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
-            this.tableLayoutPanel8.RowCount = 3;
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(149, 324);
-            this.tableLayoutPanel8.TabIndex = 3;
-            // 
-            // del_personalaty_sys
-            // 
-            this.del_personalaty_sys.AccessibleName = "del personalaty";
-            this.del_personalaty_sys.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.del_personalaty_sys.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.del_personalaty_sys.ForeColor = System.Drawing.Color.White;
-            this.del_personalaty_sys.Location = new System.Drawing.Point(76, 293);
-            this.del_personalaty_sys.Margin = new System.Windows.Forms.Padding(2);
-            this.del_personalaty_sys.Name = "del_personalaty_sys";
-            this.del_personalaty_sys.Size = new System.Drawing.Size(71, 29);
-            this.del_personalaty_sys.TabIndex = 1;
-            this.del_personalaty_sys.Text = "Delete";
-            this.del_personalaty_sys.UseVisualStyleBackColor = true;
-            this.del_personalaty_sys.Click += new System.EventHandler(this.del_personalaty_Click);
-            // 
-            // del_personalatys_sys
-            // 
-            this.del_personalatys_sys.AccessibleDescription = "";
-            this.del_personalatys_sys.AccessibleName = "add personalaty";
-            this.del_personalatys_sys.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.del_personalatys_sys.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.del_personalatys_sys.ForeColor = System.Drawing.Color.White;
-            this.del_personalatys_sys.Location = new System.Drawing.Point(2, 293);
-            this.del_personalatys_sys.Margin = new System.Windows.Forms.Padding(2);
-            this.del_personalatys_sys.Name = "del_personalatys_sys";
-            this.del_personalatys_sys.Size = new System.Drawing.Size(70, 29);
-            this.del_personalatys_sys.TabIndex = 0;
-            this.del_personalatys_sys.Text = "Add";
-            this.del_personalatys_sys.UseVisualStyleBackColor = true;
-            this.del_personalatys_sys.Click += new System.EventHandler(this.add_personalaty_Click);
-            // 
-            // list_personalatys_sys
-            // 
-            this.list_personalatys_sys.AccessibleName = "all personalatys";
-            this.list_personalatys_sys.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(59)))), ((int)(((byte)(115)))));
-            this.tableLayoutPanel8.SetColumnSpan(this.list_personalatys_sys, 2);
-            this.list_personalatys_sys.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.list_personalatys_sys.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.list_personalatys_sys.ForeColor = System.Drawing.Color.White;
-            this.list_personalatys_sys.FormattingEnabled = true;
-            this.list_personalatys_sys.ItemHeight = 25;
-            this.list_personalatys_sys.Location = new System.Drawing.Point(2, 34);
-            this.list_personalatys_sys.Margin = new System.Windows.Forms.Padding(2);
-            this.list_personalatys_sys.Name = "list_personalatys_sys";
-            this.list_personalatys_sys.Size = new System.Drawing.Size(145, 255);
-            this.list_personalatys_sys.TabIndex = 0;
-            this.list_personalatys_sys.SelectedIndexChanged += new System.EventHandler(this.list_personalatys_sys_SelectedIndexChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.tableLayoutPanel8.SetColumnSpan(this.label6, 2);
-            this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(3, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(143, 32);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Personalities";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // support_settings
             // 
             this.support_settings.AccessibleName = "support";
@@ -1608,7 +1847,6 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ui";
-            this.ShowInTaskbar = false;
             this.Text = "Settings";
             this.menu_selecter_pannel.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -1627,6 +1865,13 @@
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.main_content_container.ResumeLayout(false);
+            this.sys_settings.ResumeLayout(false);
+            this.sys_personalaty_table.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
+            this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.volume)).EndInit();
             this.visual_settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
@@ -1640,10 +1885,6 @@
             this.automation_pannel_personalatys.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
-            this.sys_settings.ResumeLayout(false);
-            this.sys_personalaty_table.ResumeLayout(false);
-            this.tableLayoutPanel8.ResumeLayout(false);
-            this.tableLayoutPanel8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1736,6 +1977,20 @@
         private System.Windows.Forms.Button remove_wallpaper;
         private System.Windows.Forms.Button add_wallpaper;
         private System.Windows.Forms.ListBox list_wallpapers;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.CheckBox smart_suggestion;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.CheckBox Ram_mon;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.CheckBox DnD;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TrackBar volume;
     }
 }
 
