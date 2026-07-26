@@ -29,7 +29,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
@@ -39,23 +39,11 @@
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAAG4CAAAAAAAAAAAqwIwCAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAIoCAAAAAAAAAAAowIwCAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-18T21:11:10.24Z",
               "IsPinned": true,
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ConfigModels.cs",
-              "DocumentMoniker": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\ConfigModels.cs",
-              "RelativeDocumentMoniker": "ConfigModels.cs",
-              "ToolTip": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\ConfigModels.cs",
-              "RelativeToolTip": "ConfigModels.cs",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAAwGEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T08:00:19.616Z"
             },
             {
               "$type": "Document",
@@ -71,6 +59,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConfigModels.cs",
+              "DocumentMoniker": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\ConfigModels.cs",
+              "RelativeDocumentMoniker": "ConfigModels.cs",
+              "ToolTip": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\ConfigModels.cs",
+              "RelativeToolTip": "ConfigModels.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAAwGEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T08:00:19.616Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Form1.Designer.cs",
               "DocumentMoniker": "C:\\Users\\r4t\\Documents\\school\\dgt\\t3\\VoidLauncher\\VoidLauncherUI\\Form1.Designer.cs",
@@ -79,8 +79,7 @@
               "RelativeToolTip": "Form1.Designer.cs",
               "ViewState": "AgIAANAAAAAAAAAAAAAYwOMAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-17T12:23:19.055Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-17T12:23:19.055Z"
             },
             {
               "$type": "Document",
