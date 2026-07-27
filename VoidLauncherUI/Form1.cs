@@ -660,6 +660,163 @@ namespace VoidLauncherUI
         private void DnD_CheckedChanged(object sender, EventArgs e)
         {
         }
+
+        private void ResetConfig_Click(object sender, EventArgs e)
+        {
+            // Ask for confirmation to prevent accidental overwrites
+            var confirmResult = MessageBox.Show(
+                "Are you sure you want to reset your configuration to default?\nThis will overwrite your current settings.",
+                "Confirm Reset",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirmResult != DialogResult.Yes) return;
+
+            try
+            {
+                // Define the default example configuration structure
+                RootConfig defaultConfig = new RootConfig
+                {
+                    GlobalSettings = new Dictionary<string, Dictionary<string, bool>>
+            {
+                { "General", new Dictionary<string, bool> { { "StartWithWindows", false } } }
+            },
+                    FeatureRamMonitor = new FeatureRamMonitorClass
+                    {
+                        Enabled = true,
+                        MaxAllowedPercentage = 85
+                    },
+                    FeatureSmartSuggestions = new FeatureSmartSuggestionsClass
+                    {
+                        Enabled = true,
+                        ScanIntervalMinutes = 5
+                    },
+                    Personalities = new List<Personality>
+            {
+                new Personality
+                {
+                    Name = "Default",
+                    Enabled = true,
+                    TriggerShortcut = "ctrl+alt+d",
+                    AppsToLaunch = new AppsToLaunchClass
+                    {
+                        Enabled = true,
+                        Paths = @"C:\Windows\explorer.exe"
+                    },
+                    TabsToOpen = new TabsToOpenClass
+                    {
+                        Enabled = true,
+                        Urls = "https://www.google.com"
+                    },
+                    VirtualDesktopSwitch = new VirtualDesktopSwitchClass
+                    {
+                        Enabled = false,
+                        TargetDesktopName = "Desktop 1"
+                    },
+                    SystemSettingsAutomation = new SystemSettingsAutomationClass
+                    {
+                        Enabled = true,
+                        VolumeLevel = 50,
+                        DoNotDisturb = false
+                    },
+                    WallpaperSwitch = new WallpaperSwitchClass
+                    {
+                        Enabled = false,
+                        WallpaperPath = ""
+                    }
+                },
+                new Personality
+                {
+                    Name = "Focus Mode",
+                    Enabled = true,
+                    TriggerShortcut = "ctrl+alt+f",
+                    AppsToLaunch = new AppsToLaunchClass
+                    {
+                        Enabled = false,
+                        Paths = ""
+                    },
+                    TabsToOpen = new TabsToOpenClass
+                    {
+                        Enabled = true,
+                        Urls = "https://github.com"
+                    },
+                    VirtualDesktopSwitch = new VirtualDesktopSwitchClass
+                    {
+                        Enabled = false,
+                        TargetDesktopName = "Focus"
+                    },
+                    SystemSettingsAutomation = new SystemSettingsAutomationClass
+                    {
+                        Enabled = true,
+                        VolumeLevel = 10,
+                        DoNotDisturb = true
+                    },
+                    WallpaperSwitch = new WallpaperSwitchClass
+                    {
+                        Enabled = false,
+                        WallpaperPath = ""
+                    }
+                }
+            }
+                };
+
+                // Serialize default configuration to formatted JSON
+                string jsonOutput = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+
+                // Write to config.json file location
+                string filePath = GetConfigFilePath();
+                File.WriteAllText(filePath, jsonOutput);
+
+                // Reload the UI controls with the new defaults
+                LoadPersonalitiesFromJson();
+
+                // Select the first personality in the list if available
+                if (all_personalatys.Items.Count > 0)
+                {
+                    all_personalatys.SelectedIndex = 0;
+                }
+
+                MessageBox.Show("Configuration successfully reset to default settings!", "Reset Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to reset configuration: {ex.Message}", "Reset Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void OpenConfig_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string filePath = GetConfigFilePath();
+                string directoryPath = System.IO.Path.GetDirectoryName(filePath);
+
+                // Ensure directory exists
+                if (!string.IsNullOrEmpty(directoryPath) && !System.IO.Directory.Exists(directoryPath))
+                {
+                    System.IO.Directory.CreateDirectory(directoryPath);
+                }
+
+                // If config.json exists, open folder and highlight the file directly
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+                }
+                // If the file doesn't exist yet, open the containing directory
+                else if (!string.IsNullOrEmpty(directoryPath) && System.IO.Directory.Exists(directoryPath))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"\"{directoryPath}\"");
+                }
+                else
+                {
+                    MessageBox.Show("Could not locate or create the configuration folder.", "Folder Not Found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to open configuration folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 
     public class RootConfig
