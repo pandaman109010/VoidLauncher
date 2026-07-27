@@ -663,7 +663,7 @@ namespace VoidLauncherUI
 
         private void ResetConfig_Click(object sender, EventArgs e)
         {
-            // Ask for confirmation to prevent accidental overwrites
+            // Prompt for confirmation to avoid accidental resets
             var confirmResult = MessageBox.Show(
                 "Are you sure you want to reset your configuration to default?\nThis will overwrite your current settings.",
                 "Confirm Reset",
@@ -674,103 +674,62 @@ namespace VoidLauncherUI
 
             try
             {
-                // Define the default example configuration structure
-                RootConfig defaultConfig = new RootConfig
-                {
-                    GlobalSettings = new Dictionary<string, Dictionary<string, bool>>
-            {
-                { "General", new Dictionary<string, bool> { { "StartWithWindows", false } } }
-            },
-                    FeatureRamMonitor = new FeatureRamMonitorClass
-                    {
-                        Enabled = true,
-                        MaxAllowedPercentage = 85
-                    },
-                    FeatureSmartSuggestions = new FeatureSmartSuggestionsClass
-                    {
-                        Enabled = true,
-                        ScanIntervalMinutes = 5
-                    },
-                    Personalities = new List<Personality>
-            {
-                new Personality
-                {
-                    Name = "Default",
-                    Enabled = true,
-                    TriggerShortcut = "ctrl+alt+d",
-                    AppsToLaunch = new AppsToLaunchClass
-                    {
-                        Enabled = true,
-                        Paths = @"C:\Windows\explorer.exe"
-                    },
-                    TabsToOpen = new TabsToOpenClass
-                    {
-                        Enabled = true,
-                        Urls = "https://www.google.com"
-                    },
-                    VirtualDesktopSwitch = new VirtualDesktopSwitchClass
-                    {
-                        Enabled = false,
-                        TargetDesktopName = "Desktop 1"
-                    },
-                    SystemSettingsAutomation = new SystemSettingsAutomationClass
-                    {
-                        Enabled = true,
-                        VolumeLevel = 50,
-                        DoNotDisturb = false
-                    },
-                    WallpaperSwitch = new WallpaperSwitchClass
-                    {
-                        Enabled = false,
-                        WallpaperPath = ""
-                    }
+                // Standard default JSON structure matching your exact schema format
+                string defaultJson = @"{
+                ""global-settings"": {
+                ""minimize-to-tray"": {
+                  ""enabled"": true
                 },
-                new Personality
-                {
-                    Name = "Focus Mode",
-                    Enabled = true,
-                    TriggerShortcut = "ctrl+alt+f",
-                    AppsToLaunch = new AppsToLaunchClass
-                    {
-                        Enabled = false,
-                        Paths = ""
-                    },
-                    TabsToOpen = new TabsToOpenClass
-                    {
-                        Enabled = true,
-                        Urls = "https://github.com"
-                    },
-                    VirtualDesktopSwitch = new VirtualDesktopSwitchClass
-                    {
-                        Enabled = false,
-                        TargetDesktopName = "Focus"
-                    },
-                    SystemSettingsAutomation = new SystemSettingsAutomationClass
-                    {
-                        Enabled = true,
-                        VolumeLevel = 10,
-                        DoNotDisturb = true
-                    },
-                    WallpaperSwitch = new WallpaperSwitchClass
-                    {
-                        Enabled = false,
-                        WallpaperPath = ""
-                    }
+                ""run-at-startup"": {
+                  ""enabled"": false
                 }
-            }
-                };
+                },
+                ""personalities"": [
+                {
+                  ""name"": ""Study"",
+                  ""enabled"": true,
+                  ""trigger-shortcut"": ""ctrl+alt+s"",
+                  ""apps-to-launch"": {
+                    ""enabled"": true,
+                    ""paths"": ""C:\\Program Files\\Code.exe, C:\\Program Files\\Anki\\anki.exe""
+                  },
+                  ""tabs-to-open"": {
+                    ""enabled"": true,
+                    ""urls"": ""https://github.com, https://trello.com""
+                  },
+                  ""virtual-desktop-switch"": {
+                    ""enabled"": false,
+                    ""target-desktop-name"": ""Study-Zone""
+                  },
+                  ""system-settings-automation"": {
+                    ""enabled"": true,
+                    ""volume-level"": 20,
+                    ""do-not-disturb"": true
+                  },
+                  ""wallpaper-switch"": {
+                    ""enabled"": true,
+                    ""wallpaper-path"": ""D:\\backgrounds\\study.jpg""
+                  }
+                }
+              ],
+              ""feature-ram-monitor"": {
+                ""enabled"": true,
+                ""max-allowed-percentage"": 85
+              },
+              ""feature-smart-suggestions"": {
+                ""enabled"": true,
+                ""scan-interval-minutes"": 5
+              }
+            }";
 
-                // Serialize default configuration to formatted JSON
-                string jsonOutput = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-
-                // Write to config.json file location
+                // Write the default JSON payload to config.json
                 string filePath = GetConfigFilePath();
-                File.WriteAllText(filePath, jsonOutput);
+                System.IO.File.WriteAllText(filePath, defaultJson);
 
-                // Reload the UI controls with the new defaults
+                // Refresh UI components immediately
                 LoadPersonalitiesFromJson();
 
-                // Select the first personality in the list if available
+                // Select the new default personality in the UI list if present
                 if (all_personalatys.Items.Count > 0)
                 {
                     all_personalatys.SelectedIndex = 0;

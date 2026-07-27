@@ -1,60 +1,63 @@
 {
   "global-settings": {
-    "General": {
-      "StartWithWindows": false
+    "minimize-to-tray": {
+      "enabled": true
+    },
+    "run-at-startup": {
+      "enabled": false
     }
   },
   "personalities": [
     {
-      "name": "Default",
+      "name": "Study",
       "enabled": true,
-      "trigger-shortcut": "ctrl+alt+d",
+      "trigger-shortcut": "ctrl+alt+s",
       "apps-to-launch": {
         "enabled": true,
-        "paths": "C:\\Windows\\explorer.exe"
+        "paths": "C:\\Program Files\\Code.exe, C:\\Program Files\\Anki\\anki.exe"
       },
       "tabs-to-open": {
         "enabled": true,
-        "urls": "https://www.google.com"
+        "urls": "https://github.com, https://trello.com"
       },
       "virtual-desktop-switch": {
         "enabled": false,
-        "target-desktop-name": "Desktop 1"
+        "target-desktop-name": "Study-Zone"
       },
       "system-settings-automation": {
         "enabled": true,
-        "volume-level": 50,
-        "do-not-disturb": false
-      },
-      "wallpaper-switch": {
-        "enabled": false,
-        "wallpaper-path": ""
-      }
-    },
-    {
-      "name": "Focus Mode",
-      "enabled": true,
-      "trigger-shortcut": "ctrl+alt+f",
-      "apps-to-launch": {
-        "enabled": false,
-        "paths": ""
-      },
-      "tabs-to-open": {
-        "enabled": true,
-        "urls": "https://github.com"
-      },
-      "virtual-desktop-switch": {
-        "enabled": false,
-        "target-desktop-name": "Focus"
-      },
-      "system-settings-automation": {
-        "enabled": true,
-        "volume-level": 10,
+        "volume-level": 20,
         "do-not-disturb": true
       },
       "wallpaper-switch": {
+        "enabled": true,
+        "wallpaper-path": "D:\\backgrounds\\study.jpg"
+      }
+    },
+    {
+      "name": "Gaming",
+      "enabled": true,
+      "trigger-shortcut": "ctrl+alt+g",
+      "apps-to-launch": {
+        "enabled": true,
+        "paths": "C:\\Program Files (x86)\\Steam\\steam.exe"
+      },
+      "tabs-to-open": {
         "enabled": false,
-        "wallpaper-path": ""
+        "urls": ""
+      },
+      "virtual-desktop-switch": {
+        "enabled": true,
+        "target-desktop-name": "Gaming-Zone"
+      },
+      "system-settings-automation": {
+        "enabled": true,
+        "volume-level": 70,
+        "do-not-disturb": true
+      },
+      "wallpaper-switch": {
+        "enabled": true,
+        "wallpaper-path": "D:\\backgrounds\\gaming.jpg"
       }
     }
   ],
@@ -65,5 +68,5 @@
   "feature-smart-suggestions": {
     "enabled": true,
     "scan-interval-minutes": 5
-  }
+    }
 }
