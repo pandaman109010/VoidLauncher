@@ -64,28 +64,66 @@ def handle_shortcut_trigger(profile_data):
         json_reader.set_personality_state(profile_name, is_active=True)
         app_handler.launch_profile_environment(profile_data)
 
-def start_hotkey_listener(stop_event):
-    # Findy personalaty
+def register_profile_hotkeys():
+    """Register enabled profile shortcuts and return their keyboard handles."""
     profiles = json_reader.get_all_personalities()
+    registered_shortcuts = set()
+    hotkey_handles = []
 
-    for profile in profiles: #runs throuh all personalatys
-        # Safety check: skip if the user completely disabled this profile
-        if not profile.get("enabled", False): #checks if they on
+    for profile in profiles:
+        if not profile.get("enabled", False):
             continue
 
-        shortcut = profile.get("trigger-shortcut", "")
+        profile_name = profile.get("name", "Unnamed profile")
+        shortcut = profile.get("trigger-shortcut", "").strip()
 
-        if shortcut:
-            # Register the custom shortcut string dynamically
-            keyboard.add_hotkey(shortcut, lambda p=profile: handle_shortcut_trigger(p))
-            print(f"Registered shortkey: [{shortcut}] -> linked to '{profile['name']}'")
+        if not shortcut:
+            continue
 
-    # Wait until the stop_event is set
+        shortcut_key = shortcut.casefold()
+        if shortcut_key in registered_shortcuts:
+            print(f"Skipped hotkey for '{profile_name}': '{shortcut}' is already used by another profile.")
+            continue
+
+        try:
+            hotkey_handle = keyboard.add_hotkey(
+                shortcut,
+                lambda p=profile: handle_shortcut_trigger(p),
+            )
+            hotkey_handles.append(hotkey_handle)
+            registered_shortcuts.add(shortcut_key)
+            print(f"Registered hotkey: [{shortcut}] -> linked to '{profile_name}'")
+        except (KeyError, ValueError, TypeError) as error:
+            print(f"Skipped invalid hotkey for '{profile_name}' ({shortcut!r}): {error}")
+        except Exception as error:
+            print(f"Could not register hotkey for '{profile_name}' ({shortcut!r}): {error}")
+
+    return hotkey_handles
+
+def unregister_profile_hotkeys(hotkey_handles):
+    for hotkey_handle in hotkey_handles:
+        try:
+            keyboard.remove_hotkey(hotkey_handle)
+        except KeyError:
+            pass
+
+def start_hotkey_listener(stop_event):
+    hotkey_handles = register_profile_hotkeys()
+    config_revision = json_reader.get_config_revision()
+
     while not stop_event.is_set():
-        time.sleep(0.1)
+        time.sleep(0.25)
 
-    # Cleanup: unhook all hotkeys (optional but clean)
-    keyboard.unhook_all()
+        # The settings app writes config.json. Re-register only after a
+        # successful reload so new, edited, or removed shortcuts work live.
+        updated_revision = json_reader.get_config_revision()
+        if updated_revision != config_revision:
+            unregister_profile_hotkeys(hotkey_handles)
+            hotkey_handles = register_profile_hotkeys()
+            config_revision = updated_revision
+            print("Reloaded profile hotkeys after configuration change.")
+
+    unregister_profile_hotkeys(hotkey_handles)
     print("Hotkey listener stopped.")
 
 def setup_tray_icon(stop_event):
@@ -156,8 +194,8 @@ if __name__ == "__main__": #checky if mainy
     # Hide console by default
     hide_console()
 
-    # starty warty
-    if json_reader.get_global_setting("run-at-startup"):
+    run_at_startup = json_reader.get_global_setting("run-at-startup")
+    if run_at_startup:
         key = winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
             r"Software\Microsoft\Windows\CurrentVersion\Run", #sceary regy
@@ -168,7 +206,7 @@ if __name__ == "__main__": #checky if mainy
         winreg.SetValueEx(key, "Void launcher", 0, winreg.REG_SZ, startup_path) #set starty
         winreg.CloseKey(key)
     # remove startup
-    if not json_reader.get_global_setting("run-at-startup"): #not starty warty
+    else:
         try:
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,

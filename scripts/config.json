@@ -1,34 +1,34 @@
 {
   "global-settings": {
-    "General": {
-      "StartWithWindows": false
+    "run-at-startup": {
+      "enabled": false
     }
   },
   "personalities": [
     {
-      "name": "Default",
+      "name": "Gaming",
       "enabled": true,
-      "trigger-shortcut": "ctrl+alt+d",
+      "trigger-shortcut": "ctrl+alt+g",
       "apps-to-launch": {
-        "enabled": true,
-        "paths": "C:\\Windows\\explorer.exe"
+        "enabled": false,
+        "paths": "C:\\Program Files (x86)\\Steam\\steam.exe"
       },
       "tabs-to-open": {
         "enabled": true,
         "urls": "https://www.google.com"
       },
       "virtual-desktop-switch": {
-        "enabled": false,
-        "target-desktop-name": "Desktop 1"
+        "enabled": true,
+        "target-desktop-name": "Gaming"
       },
       "system-settings-automation": {
         "enabled": true,
-        "volume-level": 50,
-        "do-not-disturb": false
+        "volume-level": 32,
+        "do-not-disturb": true
       },
       "wallpaper-switch": {
-        "enabled": false,
-        "wallpaper-path": ""
+        "enabled": true,
+        "wallpaper-path": "C:\\Users\\r4t\\Downloads\\e71b4b2af7a4049bcfdaf9b2382cc495.png"
       }
     },
     {
@@ -36,8 +36,8 @@
       "enabled": true,
       "trigger-shortcut": "ctrl+alt+f",
       "apps-to-launch": {
-        "enabled": false,
-        "paths": ""
+        "enabled": true,
+        "paths": "C:\\Users\\r4t\\Downloads\\Everything-1.4.1.1032.x86-Setup.exe"
       },
       "tabs-to-open": {
         "enabled": true,
@@ -50,7 +50,7 @@
       "system-settings-automation": {
         "enabled": true,
         "volume-level": 10,
-        "do-not-disturb": true
+        "do-not-disturb": false
       },
       "wallpaper-switch": {
         "enabled": false,
