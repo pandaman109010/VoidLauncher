@@ -37,11 +37,11 @@
       "trigger-shortcut": "ctrl+alt+f",
       "apps-to-launch": {
         "enabled": true,
-        "paths": "C:\\Users\\r4t\\Downloads\\Everything-1.4.1.1032.x86-Setup.exe"
+        "paths": "C:\\Users\\Jimmy\\AppData\\Local\\Programs\\Ente Auth\\auth.exe, C:\\Users\\Jimmy\\AppData\\Local\\Programs\\LocalSend\\localsend_app.exe, C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
       },
       "tabs-to-open": {
         "enabled": true,
-        "urls": "https://github.com"
+        "urls": "https://github.com, https://chatgpt.com"
       },
       "virtual-desktop-switch": {
         "enabled": false,
@@ -49,12 +49,38 @@
       },
       "system-settings-automation": {
         "enabled": true,
-        "volume-level": 10,
-        "do-not-disturb": false
+        "volume-level": 100,
+        "do-not-disturb": true
       },
       "wallpaper-switch": {
         "enabled": false,
         "wallpaper-path": ""
+      }
+    },
+    {
+      "name": "asdf",
+      "enabled": true,
+      "trigger-shortcut": "ctrl+shift+alt+f",
+      "apps-to-launch": {
+        "enabled": true,
+        "paths": "C:\\Users\\Jimmy\\Downloads\\LocalSend-1.17.0-windows-x86-64.exe"
+      },
+      "tabs-to-open": {
+        "enabled": true,
+        "urls": "https://www.google.com, https://www.youtube.com"
+      },
+      "virtual-desktop-switch": {
+        "enabled": false,
+        "target-desktop-name": "new-desktop"
+      },
+      "system-settings-automation": {
+        "enabled": true,
+        "volume-level": 100,
+        "do-not-disturb": true
+      },
+      "wallpaper-switch": {
+        "enabled": true,
+        "wallpaper-path": "D:\\backgrounds\\interesting.jpg"
       }
     }
   ],

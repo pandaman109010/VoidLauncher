@@ -90,6 +90,28 @@ def get_enabled_profile_apps(name):
     print(f"[ERROR] Invalid app paths for profile '{name}'.")
     return []
 
+def get_enabled_profile_tabs(name):
+    """Return enabled website URLs for a profile."""
+    profile = get_personality_by_name(name)
+
+    if profile is None:
+        return []
+
+    tab_settings = profile.get("tabs-to-open", {})
+
+    if not tab_settings.get("enabled", False):
+        return []
+
+    urls = tab_settings.get("urls", [])
+
+    if isinstance(urls, str):
+        return [url.strip() for url in urls.split(",") if url.strip()]
+
+    if isinstance(urls, list):
+        return [url for url in urls if isinstance(url, str)]
+
+    print(f"[ERROR] Invalid website URLs for profile '{name}'.")
+    return []
 
 def set_personality_state(name, is_active):
     if is_active:

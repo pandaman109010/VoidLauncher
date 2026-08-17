@@ -1,6 +1,7 @@
 import keyboard     #clicky wicky
 import json_reader  # readey jsey
 import app_handler  #opey clozey
+import system_settings
 import winreg       #starty warty
 from pathlib import Path #findy pathy
 import threading
@@ -56,13 +57,16 @@ def handle_shortcut_trigger(profile_data):
 
     # Check if its already open, close it
     if profile_name in active_environments:
+        system_settings.restore_profile_settings(profile_name)
         json_reader.set_personality_state(profile_name, is_active=False)
         app_handler.close_profile_environment(profile_data)
 
     # Open the personality
     else:
+        system_settings.apply_profile_settings(profile_data)
         json_reader.set_personality_state(profile_name, is_active=True)
         app_handler.launch_profile_environment(profile_data)
+
 
 def register_profile_hotkeys():
     """Register enabled profile shortcuts and return their keyboard handles."""
