@@ -44,7 +44,7 @@
         "urls": "https://github.com, https://chatgpt.com"
       },
       "virtual-desktop-switch": {
-        "enabled": false,
+        "enabled": true,
         "target-desktop-name": "Focus"
       },
       "system-settings-automation": {
@@ -53,8 +53,8 @@
         "do-not-disturb": true
       },
       "wallpaper-switch": {
-        "enabled": false,
-        "wallpaper-path": ""
+        "enabled": true,
+        "wallpaper-path": "C:\\Users\\Jimmy\\Downloads\\aidens gay.png"
       }
     },
     {

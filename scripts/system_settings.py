@@ -59,7 +59,7 @@ def _broadcast_setting_change():
             WM_SETTINGCHANGE,
             0,
             "Windows",
-            SMTO_ABORTIFHUNG,
+            SMTO_ABORTIF_HUNG if False else SMTO_ABORTIFHUNG,
             5000,
             ctypes.byref(result)
         )
@@ -142,10 +142,6 @@ def set_volume(volume_level):
 def _get_dnd_registry_value():
     """
     Read the Windows 11 Do Not Disturb CloudStore value.
-
-    Windows 11 stores the real quiet-hours state inside
-    CloudStore rather than the simple Notifications\\Settings
-    registry value.
     """
 
     try:
@@ -193,17 +189,12 @@ def _get_dnd_registry_value():
 
 
 def _dnd_data_is_enabled(data):
-    """
-    Determine whether the CloudStore DND data represents
-    an active Priority Only / Do Not Disturb state.
-    """
+    """Determine whether Windows DND is enabled."""
 
     if not data:
         return None
 
     try:
-        # The CloudStore data contains the UTF-16LE profile
-        # name near the end.
         text = data.decode(
             "utf-16-le",
             errors="ignore"
@@ -248,14 +239,7 @@ def get_do_not_disturb():
 
 
 def _find_quiet_hours_service():
-    """
-    Find the current user's Windows Push Notification
-    User Service.
-
-    Windows uses a per-user service such as:
-
-        WpnUserService_12345
-    """
+    """Find the current user's Windows notification service."""
 
     try:
         output = subprocess.check_output(
@@ -291,11 +275,7 @@ def _find_quiet_hours_service():
 
 
 def _restart_notification_service():
-    """
-    Restart the user's notification service.
-
-    This forces Windows to reload the CloudStore DND state.
-    """
+    """Restart the user's notification service."""
 
     service_name = _find_quiet_hours_service()
 
@@ -341,12 +321,7 @@ def _restart_notification_service():
 
 
 def _create_dnd_data(enabled):
-    """
-    Create the CloudStore data used by Windows 11
-    for Do Not Disturb.
-
-    Windows stores the profile name as UTF-16LE.
-    """
+    """Create Windows 11 CloudStore DND data."""
 
     if enabled:
         profile_name = (
@@ -356,10 +331,6 @@ def _create_dnd_data(enabled):
         profile_name = (
             "Microsoft.QuietHoursProfile.Unrestricted"
         )
-
-    # Windows stores the current UTC FILETIME in the
-    # CloudStore data.
-    filetime = ctypes.c_ulonglong()
 
     class FILETIME(ctypes.Structure):
         _fields_ = [
@@ -390,8 +361,6 @@ def _create_dnd_data(enabled):
         "utf-16-le"
     )
 
-    # CloudStore's binary structure used by the
-    # Windows 11 quiet-hours setting.
     data = bytearray(
         [
             0x02,
@@ -438,7 +407,7 @@ def _create_dnd_data(enabled):
 
 
 def _set_dnd_cloudstore(enabled):
-    """Write the actual Windows 11 DND CloudStore value."""
+    """Write the Windows 11 DND CloudStore value."""
 
     try:
         path = (
@@ -482,9 +451,7 @@ def _set_dnd_cloudstore(enabled):
 
 
 def set_do_not_disturb(enabled):
-    """
-    Set the actual Windows 11 Do Not Disturb state.
-    """
+    """Set the actual Windows 11 Do Not Disturb state."""
 
     enabled = bool(enabled)
 
@@ -498,13 +465,10 @@ def set_do_not_disturb(enabled):
 
     _broadcast_setting_change()
 
-    # Windows notification service caches this setting,
-    # so restart it to make Windows reload the new value.
     _restart_notification_service()
 
     time.sleep(0.5)
 
-    # Verify the actual stored state.
     actual_state = get_do_not_disturb()
 
     if actual_state == enabled:
@@ -524,22 +488,205 @@ def set_do_not_disturb(enabled):
 
 
 # ============================================================
+# WALLPAPER
+# ============================================================
+
+def get_wallpaper():
+    """Get the current Windows desktop wallpaper path."""
+
+    try:
+        SPI_GETDESKWALLPAPER = 0x0073
+
+        wallpaper_buffer = ctypes.create_unicode_buffer(260)
+
+        result = ctypes.windll.user32.SystemParametersInfoW(
+            SPI_GETDESKWALLPAPER,
+            260,
+            wallpaper_buffer,
+            0
+        )
+
+        if not result:
+            print(
+                "[System Settings] Could not get "
+                "current wallpaper."
+            )
+            return None
+
+        wallpaper = wallpaper_buffer.value
+
+        if not wallpaper:
+            print(
+                "[System Settings] Current wallpaper "
+                "path is empty."
+            )
+            return None
+
+        print(
+            f"[System Settings] Current wallpaper: "
+            f"{wallpaper}"
+        )
+
+        return wallpaper
+
+    except Exception as error:
+        print(
+            f"[System Settings] Could not get wallpaper: "
+            f"{error}"
+        )
+
+        return None
+
+
+def set_wallpaper(wallpaper_path):
+    """Change the Windows desktop wallpaper."""
+
+    try:
+        if not wallpaper_path:
+            print(
+                "[System Settings] No wallpaper path "
+                "was provided."
+            )
+            return False
+
+        wallpaper_path = os.path.expandvars(
+            os.path.expanduser(
+                str(wallpaper_path)
+            )
+        )
+
+        if not os.path.isfile(wallpaper_path):
+            print(
+                f"[System Settings] Wallpaper not found: "
+                f"{wallpaper_path}"
+            )
+            return False
+
+        SPI_SETDESKWALLPAPER = 0x0014
+        SPIF_UPDATEINIFILE = 0x01
+        SPIF_SENDCHANGE = 0x02
+
+        result = ctypes.windll.user32.SystemParametersInfoW(
+            SPI_SETDESKWALLPAPER,
+            0,
+            wallpaper_path,
+            SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
+        )
+
+        if not result:
+            print(
+                f"[System Settings] Could not set wallpaper: "
+                f"{wallpaper_path}"
+            )
+            return False
+
+        print(
+            f"[System Settings] Wallpaper changed to: "
+            f"{wallpaper_path}"
+        )
+
+        return True
+
+    except Exception as error:
+        print(
+            f"[System Settings] Could not set wallpaper: "
+            f"{error}"
+        )
+
+        return False
+
+
+def save_current_wallpaper(profile_name):
+    """Save the wallpaper before changing it."""
+
+    if profile_name not in _original_settings:
+        _original_settings[profile_name] = {}
+
+    if "wallpaper" in _original_settings[profile_name]:
+        return
+
+    current_wallpaper = get_wallpaper()
+
+    _original_settings[profile_name]["wallpaper"] = (
+        current_wallpaper
+    )
+
+    if current_wallpaper:
+        print(
+            f"[System Settings] Saved original wallpaper "
+            f"for '{profile_name}'."
+        )
+
+
+def apply_wallpaper(profile_data):
+    """Save the current wallpaper and apply the profile wallpaper."""
+
+    profile_name = profile_data.get("name")
+
+    if not profile_name:
+        return
+
+    settings = profile_data.get(
+        "wallpaper-switch",
+        {}
+    )
+
+    if not settings.get("enabled", False):
+        return
+
+    wallpaper_path = settings.get(
+        "wallpaper-path",
+        ""
+    )
+
+    if not wallpaper_path:
+        print(
+            f"[System Settings] No wallpaper configured "
+            f"for '{profile_name}'."
+        )
+        return
+
+    save_current_wallpaper(profile_name)
+
+    set_wallpaper(wallpaper_path)
+
+
+def restore_wallpaper(profile_name):
+    """Restore the wallpaper from before the personality."""
+
+    if profile_name not in _original_settings:
+        return
+
+    original_wallpaper = _original_settings[
+        profile_name
+    ].get("wallpaper")
+
+    if not original_wallpaper:
+        return
+
+    set_wallpaper(original_wallpaper)
+
+    print(
+        f"[System Settings] Restored original wallpaper "
+        f"for '{profile_name}'."
+    )
+
+
+# ============================================================
 # SAVE CURRENT SETTINGS
 # ============================================================
 
 def save_current_settings(profile_name):
     """Save the current Windows settings before changing them."""
 
-    if profile_name in _original_settings:
-        return
+    if profile_name not in _original_settings:
+        _original_settings[profile_name] = {}
 
     current_volume = get_volume()
     current_dnd = get_do_not_disturb()
 
-    _original_settings[profile_name] = {
-        "volume": current_volume,
-        "do-not-disturb": current_dnd
-    }
+    _original_settings[profile_name]["volume"] = current_volume
+    _original_settings[profile_name]["do-not-disturb"] = current_dnd
 
     print(
         f"[System Settings] Saved settings for "
@@ -576,29 +723,56 @@ def apply_profile_settings(profile_data):
         {}
     )
 
-    if not settings.get("enabled", False):
-        return
+    wallpaper_settings = profile_data.get(
+        "wallpaper-switch",
+        {}
+    )
 
-    # Save the original settings BEFORE changing them.
-    save_current_settings(profile_name)
+    # --------------------------------------------------------
+    # Save settings
+    # --------------------------------------------------------
+
+    if settings.get("enabled", False):
+        save_current_settings(profile_name)
+
+    if wallpaper_settings.get("enabled", False):
+        save_current_wallpaper(profile_name)
 
     # --------------------------------------------------------
     # Volume
     # --------------------------------------------------------
 
-    volume_level = settings.get("volume-level")
+    if settings.get("enabled", False):
 
-    if volume_level is not None:
-        set_volume(volume_level)
-
-    # --------------------------------------------------------
-    # Do Not Disturb
-    # --------------------------------------------------------
-
-    if "do-not-disturb" in settings:
-        set_do_not_disturb(
-            settings["do-not-disturb"]
+        volume_level = settings.get(
+            "volume-level"
         )
+
+        if volume_level is not None:
+            set_volume(volume_level)
+
+        # ----------------------------------------------------
+        # Do Not Disturb
+        # ----------------------------------------------------
+
+        if "do-not-disturb" in settings:
+            set_do_not_disturb(
+                settings["do-not-disturb"]
+            )
+
+    # --------------------------------------------------------
+    # Wallpaper
+    # --------------------------------------------------------
+
+    if wallpaper_settings.get("enabled", False):
+
+        wallpaper_path = wallpaper_settings.get(
+            "wallpaper-path",
+            ""
+        )
+
+        if wallpaper_path:
+            set_wallpaper(wallpaper_path)
 
 
 # ============================================================
@@ -624,7 +798,7 @@ def restore_profile_settings(profile_name):
     # Restore volume
     # --------------------------------------------------------
 
-    if settings["volume"] is not None:
+    if settings.get("volume") is not None:
         set_volume(
             settings["volume"]
         )
@@ -633,9 +807,18 @@ def restore_profile_settings(profile_name):
     # Restore DND
     # --------------------------------------------------------
 
-    if settings["do-not-disturb"] is not None:
+    if settings.get("do-not-disturb") is not None:
         set_do_not_disturb(
             settings["do-not-disturb"]
+        )
+
+    # --------------------------------------------------------
+    # Restore wallpaper
+    # --------------------------------------------------------
+
+    if settings.get("wallpaper"):
+        set_wallpaper(
+            settings["wallpaper"]
         )
 
     print(
