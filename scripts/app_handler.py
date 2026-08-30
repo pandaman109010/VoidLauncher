@@ -6,8 +6,11 @@ from pathlib import Path
 import subprocess
 from threading import RLock
 import time
+import winreg
 
 import json_reader
+import virtual_desktop
+
 from pyvda import AppView, VirtualDesktop
 
 
@@ -15,9 +18,12 @@ from pyvda import AppView, VirtualDesktop
 # PROCESS TRACKING
 # ============================================================
 
-# Popen objects identify the exact processes VoidLauncher started.
-# Never close processes merely because they have the same executable name.
-_profile_processes = {}
+# Each entry records EXACTLY what VoidLauncher itself opened:
+#   {"kind": "process", "popen": Popen}   - an app process we started
+#   {"kind": "window",  "window_id": int} - a browser window we opened
+# Closing a personality only closes these - other instances of the
+# same application the user already had open are never touched.
+_profile_apps = {}
 
 _process_lock = RLock()
 
@@ -80,6 +86,26 @@ def _normalise_app_entry(entry):
     return command
 
 
+def _register_tracked_process(profile_name, command, cwd=None):
+    """
+    Start a process and track it as belonging to the profile.
+
+    Only the exact process started here is tracked, so closing the
+    personality never touches other instances of the same app.
+    """
+
+    process = subprocess.Popen(
+        command,
+        cwd=cwd,
+        shell=False
+    )
+
+    return {
+        "kind": "process",
+        "popen": process
+    }
+
+
 def launch_profile_environment(profile_data):
     """
     Launch enabled apps for a profile.
@@ -109,12 +135,15 @@ def launch_profile_environment(profile_data):
     with _process_lock:
 
         running = [
-            process
-            for process in _profile_processes.get(
+            entry
+            for entry in _profile_apps.get(
                 profile_name,
                 []
             )
-            if process.poll() is None
+            if (
+                entry.get("kind") == "process"
+                and entry["popen"].poll() is None
+            )
         ]
 
         if running:
@@ -160,12 +189,12 @@ def launch_profile_environment(profile_data):
 
             try:
 
-                process = subprocess.Popen(
+                entry = _register_tracked_process(
+                    profile_name,
                     command,
                     cwd=str(
                         executable.parent
-                    ),
-                    shell=False
+                    )
                 )
 
             except OSError as error:
@@ -178,16 +207,16 @@ def launch_profile_environment(profile_data):
                 continue
 
             launched.append(
-                process
+                entry
             )
 
             print(
                 f"[App Handler] Started "
                 f"'{executable.name}' "
-                f"(PID {process.pid})."
+                f"(PID {entry['popen'].pid})."
             )
 
-        _profile_processes[
+        _profile_apps[
             profile_name
         ] = launched
 
@@ -210,8 +239,8 @@ def launch_profile_environment(profile_data):
 # WINDOWS / PROCESS CLOSING
 # ============================================================
 
-def _get_windows_for_process(process_id):
-    """Return visible top-level windows belonging to a process."""
+def _get_windows_for_processes(process_ids):
+    """Return visible top-level windows belonging to any given PID."""
 
     windows = []
 
@@ -234,7 +263,7 @@ def _get_windows_for_process(process_id):
             )
         )
 
-        if window_process_id.value == process_id:
+        if window_process_id.value in process_ids:
 
             if user32.IsWindowVisible(hwnd):
 
@@ -252,11 +281,141 @@ def _get_windows_for_process(process_id):
     return windows
 
 
-def _request_process_close(process):
-    """Ask all visible windows belonging to a process to close normally."""
+def _process_snapshot():
+    """Return a {pid: (parent_pid, executable_name)} snapshot."""
 
-    windows = _get_windows_for_process(
-        process.pid
+    kernel32 = ctypes.windll.kernel32
+
+    TH32CS_SNAPPROCESS = 0x00000002
+
+    class PROCESSENTRY32W(ctypes.Structure):
+        _fields_ = [
+            ("dwSize", ctypes.c_ulong),
+            ("cntUsage", ctypes.c_ulong),
+            ("th32ProcessID", ctypes.c_ulong),
+            ("th32DefaultHeapID", ctypes.c_size_t),
+            ("th32ModuleID", ctypes.c_ulong),
+            ("cntThreads", ctypes.c_ulong),
+            ("th32ParentProcessID", ctypes.c_ulong),
+            ("pcPriClassBase", ctypes.c_long),
+            ("dwFlags", ctypes.c_ulong),
+            ("szExeFile", ctypes.c_wchar * 260)
+        ]
+
+    entry = PROCESSENTRY32W()
+    entry.dwSize = ctypes.sizeof(
+        PROCESSENTRY32W
+    )
+
+    snapshot = kernel32.CreateToolhelp32Snapshot(
+        TH32CS_SNAPPROCESS,
+        0
+    )
+
+    if snapshot in (0, -1):
+        return {}
+
+    result = {}
+
+    try:
+
+        if not kernel32.Process32FirstW(
+            snapshot,
+            ctypes.byref(entry)
+        ):
+            return {}
+
+        while True:
+
+            result[
+                entry.th32ProcessID
+            ] = (
+                entry.th32ParentProcessID,
+                entry.szExeFile
+            )
+
+            if not kernel32.Process32NextW(
+                snapshot,
+                ctypes.byref(entry)
+            ):
+                break
+
+    finally:
+
+        kernel32.CloseHandle(
+            snapshot
+        )
+
+    return result
+
+
+def _windows_for_process(process_id):
+    """Return visible top-level windows belonging to one process."""
+
+    return _get_windows_for_processes(
+        [process_id]
+    )
+
+
+def _force_kill_process(pid):
+    """Terminate a single process by PID."""
+
+    kernel32 = ctypes.windll.kernel32
+
+    handle = kernel32.OpenProcess(
+        0x0001,
+        False,
+        pid
+    )
+
+    if not handle:
+        return
+
+    try:
+
+        kernel32.TerminateProcess(
+            handle,
+            1
+        )
+
+    except Exception:
+        pass
+
+    finally:
+
+        kernel32.CloseHandle(
+            handle
+        )
+
+
+def _close_request_windows(process_ids):
+    """Ask every visible window of the PIDs to close normally."""
+
+    user32 = ctypes.windll.user32
+
+    windows = _get_windows_for_processes(
+        process_ids
+    )
+
+    for hwnd in windows:
+
+        user32.PostMessageW(
+            hwnd,
+            WM_CLOSE,
+            0,
+            0
+        )
+
+    return bool(windows)
+
+
+def _request_process_close(process):
+    """Ask all visible windows of a process to close normally."""
+
+    process_id = process.pid
+
+    windows = _windows_for_process(
+        process_id
     )
 
     if not windows:
@@ -280,8 +439,10 @@ def _close_process_normally(process):
     """
     Ask a process to close normally and wait for it to exit.
 
-    Applications such as Word can therefore show their normal
-    save prompt.
+    This is exactly what pressing the X on its windows does, so
+    applications such as Word can show their normal save prompt.
+    A process that refuses to close is left alone - it is never
+    force-killed or crashed out.
     """
 
     if process.poll() is not None:
@@ -314,15 +475,100 @@ def _close_process_normally(process):
             0.25
         )
 
+    print(
+        f"[App Handler] PID {process.pid} is still "
+        f"running. Left it alone instead of "
+        f"force-closing it."
+    )
+
     return False
+
+
+def _close_tracked_window(window_id):
+    """
+    Close a browser window VoidLauncher itself opened.
+
+    Only that exact window gets a WM_CLOSE, so windows the user
+    already had open in the same browser are left alone.
+    """
+
+    user32 = ctypes.windll.user32
+
+    if not user32.IsWindow(window_id):
+        return True
+
+    print(
+        f"[App Handler] Closing browser window "
+        f"0x{window_id:08X}..."
+    )
+
+    user32.PostMessageW(
+        window_id,
+        WM_CLOSE,
+        0,
+        0
+    )
+
+    for _ in range(12):
+
+        if not user32.IsWindow(window_id):
+            return True
+
+        time.sleep(
+            0.25
+        )
+
+    print(
+        f"[App Handler] Browser window "
+        f"0x{window_id:08X} is still open. "
+        f"Left it alone."
+    )
+
+    return False
+
+
+def _close_tracked_entry(entry):
+    """
+    Close exactly one thing VoidLauncher opened for a profile.
+    """
+
+    if entry["kind"] == "process":
+
+        process = entry["popen"]
+
+        try:
+
+            return _close_process_normally(
+                process
+            )
+
+        except OSError as error:
+
+            print(
+                f"[App Handler] Could not request "
+                f"close for PID {process.pid}: "
+                f"{error}"
+            )
+
+            return False
+
+    if entry["kind"] == "window":
+
+        return _close_tracked_window(
+            entry["window_id"]
+        )
+
+    return True
 
 
 def close_profile_environment(profile_data):
     """
-    Close only processes started by this profile.
+    Close only things this profile actually opened.
 
-    Applications are asked to close normally instead
-    of being force-killed.
+    Exactly like the original design: each process and browser
+    window gets a normal window close (the X button). Anything that
+    refuses to close is left alone so it can show a save prompt -
+    it is never force-killed.
     """
 
     profile_name = profile_data.get(
@@ -334,12 +580,12 @@ def close_profile_environment(profile_data):
 
     with _process_lock:
 
-        processes = _profile_processes.pop(
+        entries = _profile_apps.pop(
             profile_name,
             []
         )
 
-    if not processes:
+    if not entries:
 
         print(
             f"[App Handler] No tracked apps to close "
@@ -348,63 +594,41 @@ def close_profile_environment(profile_data):
 
         return
 
-    still_running = []
+    remaining = []
 
-    for process in processes:
+    for entry in entries:
 
-        if process.poll() is not None:
-            continue
+        closed = _close_tracked_entry(
+            entry
+        )
 
-        try:
+        if closed:
 
-            closed = _close_process_normally(
-                process
-            )
-
-            if closed:
+            if entry["kind"] == "process":
 
                 print(
                     f"[App Handler] Stopped PID "
-                    f"{process.pid} for "
+                    f"{entry['popen'].pid} for "
                     f"'{profile_name}'."
                 )
 
-            else:
+        else:
 
-                still_running.append(
-                    process
-                )
-
-                print(
-                    f"[App Handler] PID "
-                    f"{process.pid} is still running. "
-                    f"Left it alone instead of "
-                    f"force-closing it."
-                )
-
-        except OSError as error:
-
-            still_running.append(
-                process
+            remaining.append(
+                entry
             )
 
-            print(
-                f"[App Handler] Could not request "
-                f"close for PID {process.pid}: "
-                f"{error}"
-            )
-
-    if still_running:
+    if remaining:
 
         with _process_lock:
 
-            _profile_processes[
+            _profile_apps[
                 profile_name
-            ] = still_running
+            ] = remaining
 
         print(
             f"[App Handler] '{profile_name}' still has "
-            f"{len(still_running)} running app(s)."
+            f"{len(remaining)} running app(s)."
         )
 
     else:
@@ -415,52 +639,185 @@ def close_profile_environment(profile_data):
         )
 
 
+def close_processes_by_name(image_name):
+    """
+    Close every process with the given executable name.
+
+    Only used for an explicit user request, such as closing the
+    settings window when Void Launcher exits - never for apps an
+    active personality started.
+    """
+
+    image_name = (
+        Path(
+            image_name
+        ).name.casefold()
+    )
+
+    def _matching_pids():
+
+        snapshot = _process_snapshot()
+
+        return {
+            pid
+            for pid, (_, name) in snapshot.items()
+            if name.casefold() == image_name
+        }
+
+    pids = _matching_pids()
+
+    if not pids:
+        return False
+
+    has_windows = _close_request_windows(
+        pids
+    )
+
+    deadline = time.time() + 2.0
+
+    while time.time() < deadline:
+
+        if not _matching_pids():
+            return True
+
+        if not has_windows:
+            break
+
+        time.sleep(
+            0.25
+        )
+
+    for pid in _matching_pids():
+
+        _force_kill_process(
+            pid
+        )
+
+    return True
+
+
 # ============================================================
 # BROWSER DETECTION
 # ============================================================
 
+def _get_default_browser_path():
+    """
+    Resolve the Windows default web browser executable.
+
+    Reads the http UserChoice ProgId, then the ProgId's shell
+    open command, and extracts the executable path.
+    """
+
+    try:
+
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            (
+                r"Software\Microsoft\Windows\Shell"
+                r"\Associations\UrlAssociations\http"
+                r"\UserChoice"
+            ),
+            0,
+            winreg.KEY_READ
+        )
+
+        prog_id = winreg.QueryValueEx(
+            key,
+            "ProgId"
+        )[0]
+
+        winreg.CloseKey(key)
+
+    except OSError:
+        return None
+
+    if not prog_id:
+        return None
+
+    try:
+
+        command = winreg.QueryValue(
+            winreg.HKEY_CLASSES_ROOT,
+            prog_id + r"\shell\open\command"
+        )
+
+    except OSError:
+        return None
+
+    if not command:
+        return None
+
+    path_part = command.strip()
+
+    # The open command is usually a quoted path, e.g.
+    # "C:\Program Files\Mozilla Firefox\firefox.exe" -osint -url "%1"
+    if path_part.startswith("\""):
+
+        end = path_part.find("\"", 1)
+
+        if end <= 1:
+            return None
+
+        path_part = path_part[1:end]
+
+    else:
+
+        path_part = path_part.split(None, 1)[0]
+
+    path_part = os.path.expandvars(
+        path_part
+    )
+
+    if os.path.isfile(path_part):
+        print(
+            f"[App Handler] Default browser: "
+            f"{path_part}"
+        )
+        return path_part
+
+    return None
+
+
 def _find_browser():
     """
-    Find an installed browser executable.
+    Find a browser executable.
 
-    Chrome is preferred, then Edge, then Firefox.
+    The Windows default browser is preferred. Otherwise Chrome is
+    preferred, then Edge, then Firefox, then other Chromium forks.
     """
+
+    default_browser = _get_default_browser_path()
+
+    if default_browser:
+        return default_browser
 
     possible_browsers = [
 
         # Chrome
-        os.path.expandvars(
-            r"%ProgramFiles%\Google\Chrome\Application\chrome.exe"
-        ),
-
-        os.path.expandvars(
-            r"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"
-        ),
-
-        os.path.expandvars(
-            r"%LocalAppData%\Google\Chrome\Application\chrome.exe"
-        ),
+        r"%ProgramFiles%\Google\Chrome\Application\chrome.exe",
+        r"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe",
+        r"%LocalAppData%\Google\Chrome\Application\chrome.exe",
 
         # Edge
-        os.path.expandvars(
-            r"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"
-        ),
-
-        os.path.expandvars(
-            r"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"
-        ),
+        r"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe",
+        r"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe",
 
         # Firefox
-        os.path.expandvars(
-            r"%ProgramFiles%\Mozilla Firefox\firefox.exe"
-        ),
+        r"%ProgramFiles%\Mozilla Firefox\firefox.exe",
+        r"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe",
 
-        os.path.expandvars(
-            r"%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"
-        )
+        # Other Chromium forks
+        r"%ProgramFiles%\BraveSoftware\Brave-Browser\Application\brave.exe",
+        r"%LocalAppData%\BraveSoftware\Brave-Browser\Application\brave.exe",
+        r"%ProgramFiles%\Opera\launcher.exe",
+        r"%LocalAppData%\Vivaldi\Application\vivaldi.exe"
     ]
 
     for browser in possible_browsers:
+
+        browser = os.path.expandvars(
+            browser
+        )
 
         if os.path.isfile(browser):
             return browser
@@ -478,8 +835,18 @@ def _get_browser_windows():
     browsers = {
         "chrome.exe",
         "msedge.exe",
-        "firefox.exe"
+        "firefox.exe",
+        "brave.exe",
+        "opera.exe",
+        "vivaldi.exe"
     }
+
+    default_browser = _find_browser()
+
+    if default_browser:
+        browsers.add(
+            Path(default_browser).name.casefold()
+        )
 
     windows = []
 
@@ -566,38 +933,47 @@ def _get_browser_windows():
 # BROWSER WINDOW MOVING
 # ============================================================
 
-def _move_browser_window_to_current_desktop(hwnd):
+def _move_browser_window_to_profile_desktop(profile_name, hwnd):
     """
-    Move a browser window onto the currently active
-    Windows virtual desktop.
+    Move a browser window onto the personality's virtual desktop.
+
+    The personality desktop is used directly (not the currently
+    active one) so a browser that opens on Desktop One cannot
+    trick the launcher into confirming it there.
     """
 
     try:
 
-        current_desktop = (
-            VirtualDesktop.current()
+        personality_desktop = (
+            virtual_desktop.get_active_personality_desktop(
+                profile_name
+            )
         )
 
-        if current_desktop is None:
+        if personality_desktop is None:
+
+            personality_desktop = (
+                VirtualDesktop.current()
+            )
+
+        if personality_desktop is None:
 
             print(
                 "[App Handler] Could not get "
-                "current virtual desktop."
+                "a virtual desktop for the browser."
             )
 
             return False
 
-        browser_view = AppView(
+        AppView(
             hwnd
-        )
-
-        browser_view.move(
-            current_desktop
+        ).move(
+            personality_desktop
         )
 
         print(
             "[App Handler] Moved browser window "
-            "to the current virtual desktop."
+            "onto the personality desktop."
         )
 
         return True
@@ -606,18 +982,20 @@ def _move_browser_window_to_current_desktop(hwnd):
 
         print(
             f"[App Handler] Could not move browser "
-            f"window to current desktop: {error}"
+            f"window onto the personality desktop: "
+            f"{error}"
         )
 
         return False
 
 
-def _open_first_browser_window(url):
+def _open_first_browser_window(profile_name, url):
     """
     Create one new browser window containing the first URL.
 
-    The window is then moved to the currently active
-    virtual desktop.
+    The window is then moved onto the personality desktop and the
+    exact window is tracked, so closing the personality only closes
+    the window that was opened here.
     """
 
     browser = _find_browser()
@@ -637,10 +1015,19 @@ def _open_first_browser_window(url):
             _get_browser_windows()
         )
 
+        new_window_arg = (
+            "-new-window"
+            if (
+                Path(browser).name.casefold()
+                == "firefox.exe"
+            )
+            else "--new-window"
+        )
+
         subprocess.Popen(
             [
                 browser,
-                "--new-window",
+                new_window_arg,
                 url
             ],
             creationflags=subprocess.CREATE_NO_WINDOW
@@ -677,16 +1064,62 @@ def _open_first_browser_window(url):
 
         if new_hwnd is None:
 
+            # The browser handed the URL to an existing window
+            # (Edge/Chrome delegation) faster than the launcher
+            # could snapshot it. Fall back to pulling every
+            # browser window onto the personality desktop.
             print(
-                "[App Handler] Could not find "
-                "the new browser window."
+                "[App Handler] No brand-new window was "
+                "detected; pulling existing browser "
+                "windows onto the personality desktop."
             )
 
-            return None
+            for hwnd in _get_browser_windows():
 
-        # Move the entire browser window to the
-        # personality desktop.
-        _move_browser_window_to_current_desktop(
+                _move_browser_window_to_profile_desktop(
+                    profile_name,
+                    hwnd
+                )
+
+            existing = _get_browser_windows()
+
+            if existing:
+
+                new_hwnd = existing[0]
+
+                ctypes.windll.user32.ShowWindow(
+                    new_hwnd,
+                    5
+                )
+
+                ctypes.windll.user32.SetForegroundWindow(
+                    new_hwnd
+                )
+
+            _reassert_profile_desktop(
+                profile_name
+            )
+
+            return new_hwnd
+
+        # Track the window itself, so closing the personality asks
+        # EXACTLY this window to close - never windows the user
+        # already had open in the same browser.
+        with _process_lock:
+
+            _profile_apps.setdefault(
+                profile_name,
+                []
+            ).append(
+                {
+                    "kind": "window",
+                    "window_id": new_hwnd
+                }
+            )
+
+        # Move the browser window onto the personality desktop.
+        _move_browser_window_to_profile_desktop(
+            profile_name,
             new_hwnd
         )
 
@@ -698,6 +1131,10 @@ def _open_first_browser_window(url):
 
         ctypes.windll.user32.SetForegroundWindow(
             new_hwnd
+        )
+
+        _reassert_profile_desktop(
+            profile_name
         )
 
         return new_hwnd
@@ -744,6 +1181,34 @@ def _open_browser_tab(browser, url):
         )
 
         return False
+
+
+def _reassert_profile_desktop(profile_name):
+    """
+    Put focus back onto the personality's virtual desktop.
+
+    Browsers like Edge and Chrome can yank the visible desktop
+    when they open, so switch back to the personality desktop.
+    """
+
+    profile = (
+        json_reader.get_personality_by_name(
+            profile_name
+        )
+    )
+
+    if profile is None:
+        return
+
+    if not profile.get(
+        "virtual-desktop-switch",
+        {}
+    ).get("enabled", False):
+        return
+
+    virtual_desktop.switch_to_profile_desktop(
+        profile
+    )
 
 
 # ============================================================
@@ -796,6 +1261,7 @@ def open_profile_tabs(profile_name):
 
     browser_window = (
         _open_first_browser_window(
+            profile_name,
             first_url
         )
     )
@@ -816,6 +1282,21 @@ def open_profile_tabs(profile_name):
         _open_browser_tab(
             browser,
             url
+        )
+
+    # Chrome/Edge can steal the current desktop when they open, and the
+    # window move + focus race can finish just AFTER they open. Keep
+    # putting the visible desktop back for a couple of seconds so the
+    # personality desktop wins - otherwise Edge parks everything on
+    # Desktop One and every subsequent app follows it there.
+    for _ in range(8):
+
+        _reassert_profile_desktop(
+            profile_name
+        )
+
+        time.sleep(
+            0.25
         )
 
     print(

@@ -11,14 +11,12 @@ Supports:
     - Safe tracking using desktop GUIDs
 
 pyvda is still used for the actual desktop operations.
-Windows Registry is used for the desktop names because pyvda
-does not expose desktop naming in all versions.
+Desktop names use pyvda's rename API where available (Windows 11),
+with the Explorer registry fallback for Windows 10.
 """
 
 import ctypes
-import os
-import platform
-import re
+import uuid
 import winreg
 
 from pyvda import VirtualDesktop, get_virtual_desktops
@@ -50,34 +48,6 @@ _previous_desktops = {}
 # }
 #
 _profile_desktops = {}
-
-
-# ============================================================
-# WINDOWS VERSION
-# ============================================================
-
-def _get_windows_build():
-    """Return the Windows build number."""
-
-    try:
-
-        version = platform.version()
-
-        numbers = re.findall(
-            r"\d+",
-            version
-        )
-
-        if numbers:
-
-            return int(
-                numbers[-1]
-            )
-
-    except Exception:
-        pass
-
-    return 0
 
 
 # ============================================================
@@ -246,8 +216,6 @@ def _normalise_guid(value):
 
             if len(value) == 16:
 
-                import uuid
-
                 return str(
                     uuid.UUID(
                         bytes_le=value
@@ -264,8 +232,6 @@ def _normalise_guid(value):
         text = text.strip(
             "{}"
         )
-
-        import uuid
 
         parsed = uuid.UUID(
             text
@@ -316,8 +282,6 @@ def _get_all_registry_desktop_guids():
         ):
 
             return []
-
-        import uuid
 
         guids = []
 
@@ -553,6 +517,46 @@ def _set_desktop_name(
     if not desktop_name:
         return False
 
+    # --------------------------------------------------------
+    # Windows 11: the COM rename API is the only way Explorer
+    # actually reflects a desktop name.
+    # --------------------------------------------------------
+
+    rename_func = getattr(
+        desktop,
+        "rename",
+        None
+    )
+
+    if rename_func is not None:
+
+        try:
+
+            rename_func(
+                desktop_name
+            )
+
+            print(
+                f"[Virtual Desktop] Named desktop "
+                f"'{desktop_name}'."
+            )
+
+            return True
+
+        except NotImplementedError:
+
+            print(
+                "[Virtual Desktop] Rename API not "
+                "supported here; using registry fallback."
+            )
+
+        except Exception as error:
+
+            print(
+                f"[Virtual Desktop] Rename API failed "
+                f"({error}); using registry fallback."
+            )
+
     guid = _get_desktop_guid(
         desktop
     )
@@ -707,48 +711,6 @@ def _same_desktop(
 # ============================================================
 # DESKTOP EXISTENCE / REFRESH
 # ============================================================
-
-def _desktop_exists(
-    desktop
-):
-    """Check whether a desktop still exists."""
-
-    if desktop is None:
-        return False
-
-    wanted_guid = _get_desktop_guid(
-        desktop
-    )
-
-    if wanted_guid:
-
-        for existing in get_all_desktops():
-
-            existing_guid = (
-                _get_desktop_guid(
-                    existing
-                )
-            )
-
-            if (
-                existing_guid
-                == wanted_guid
-            ):
-
-                return True
-
-    # Fallback to object equality/number.
-    for existing in get_all_desktops():
-
-        if _same_desktop(
-            existing,
-            desktop
-        ):
-
-            return True
-
-    return False
-
 
 def _get_fresh_desktop(
     desktop
@@ -988,41 +950,6 @@ def switch_to_desktop(
 
 
 # ============================================================
-# FIND DESKTOP BY NAME
-# ============================================================
-
-def find_desktop_by_name(
-    desktop_name
-):
-    """Find a real Windows virtual desktop by its name."""
-
-    if not desktop_name:
-        return None
-
-    wanted_name = str(
-        desktop_name
-    ).strip().casefold()
-
-    for desktop in get_all_desktops():
-
-        current_name = (
-            _get_desktop_name(
-                desktop
-            )
-        )
-
-        if (
-            current_name
-            and current_name.casefold()
-            == wanted_name
-        ):
-
-            return desktop
-
-    return None
-
-
-# ============================================================
 # PERSONALITY DESKTOPS
 # ============================================================
 
@@ -1253,6 +1180,26 @@ def switch_to_profile_desktop(
     )
 
 
+def get_active_personality_desktop(profile_name):
+    """
+    Return the virtual desktop a personality is currently using.
+
+    Returns None if the personality has not taken control of a
+    desktop during this session.
+    """
+
+    info = (
+        _profile_desktops.get(
+            profile_name,
+            {}
+        )
+    )
+
+    return info.get(
+        "desktop"
+    )
+
+
 # ============================================================
 # UPDATE REFERENCES BEFORE DELETION
 # ============================================================
@@ -1306,11 +1253,6 @@ def _update_references_before_deleting(
             info.get(
                 "desktop"
             )
-            if isinstance(
-                info,
-                dict
-            )
-            else info
         )
 
         previous_guid = (
@@ -1529,6 +1471,18 @@ def restore_previous_desktop(
         )
     )
 
+    if (
+        previous_info is None
+        and profile_info is None
+    ):
+
+        print(
+            f"[Virtual Desktop] '{profile_name}' did not "
+            f"use virtual desktops. Nothing to restore."
+        )
+
+        return False
+
     personality_desktop = None
     was_created = False
 
@@ -1551,21 +1505,14 @@ def restore_previous_desktop(
     # Extract saved previous desktop.
     # --------------------------------------------------------
 
-    if isinstance(
-        previous_info,
-        dict
-    ):
+    previous_desktop = None
+
+    if previous_info is not None:
 
         previous_desktop = (
             previous_info.get(
                 "desktop"
             )
-        )
-
-    else:
-
-        previous_desktop = (
-            previous_info
         )
 
     # --------------------------------------------------------
@@ -1671,92 +1618,3 @@ def restore_previous_desktop(
             )
 
     return switched
-
-
-# ============================================================
-# PROFILE DESKTOP ACCESS
-# ============================================================
-
-def get_profile_desktop(
-    profile_name
-):
-    """Return the current desktop assigned to a profile."""
-
-    profile_info = (
-        _profile_desktops.get(
-            profile_name
-        )
-    )
-
-    if profile_info is None:
-        return None
-
-    desktop = (
-        profile_info.get(
-            "desktop"
-        )
-    )
-
-    fresh_desktop = (
-        _get_fresh_desktop(
-            desktop
-        )
-    )
-
-    if fresh_desktop is not None:
-
-        profile_info[
-            "desktop"
-        ] = fresh_desktop
-
-    return fresh_desktop
-
-
-# ============================================================
-# DEBUGGING
-# ============================================================
-
-def print_desktop_list():
-    """Print all current desktops with their real Windows names."""
-
-    desktops = (
-        get_all_desktops()
-    )
-
-    if not desktops:
-
-        print(
-            "[Virtual Desktop] No desktops found."
-        )
-
-        return
-
-    print(
-        "[Virtual Desktop] Current desktops:"
-    )
-
-    for desktop in desktops:
-
-        number = (
-            _get_desktop_number(
-                desktop
-            )
-        )
-
-        name = (
-            _get_desktop_name(
-                desktop
-            )
-        )
-
-        guid = (
-            _get_desktop_guid(
-                desktop
-            )
-        )
-
-        print(
-            f"    Desktop {number + 1 if number is not None else '?'}"
-            f" | Name: '{name}'"
-            f" | GUID: {guid}"
-        )

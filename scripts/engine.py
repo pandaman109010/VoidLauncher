@@ -5,6 +5,7 @@ import system_settings
 import winreg
 
 from pathlib import Path
+from collections import deque
 
 import threading
 import time
@@ -17,6 +18,70 @@ from PIL import Image
 import virtual_desktop
 
 
+class _ConsoleStream:
+    """A stdout/stderr sink that buffers output and attaches to a live console.
+
+    Logs written while no console exists are kept in a rolling ring buffer,
+    so 'Show Console' can replay them into the freshly allocated console.
+    """
+
+    def __init__(self, max_lines=4000):
+        self._buffer = deque(maxlen=max_lines)
+        self._live = None
+
+    def attach(self, live_stream):
+        self._live = live_stream
+        try:
+            live_stream.write("".join(self._buffer))
+            live_stream.flush()
+        except Exception:
+            pass
+
+    def detach(self):
+        try:
+            if self._live is not None:
+                self._live.flush()
+                self._live.close()
+        except Exception:
+            pass
+        self._live = None
+
+    def write(self, text):
+        try:
+            self._buffer.append(text)
+            if self._live is not None:
+                self._live.write(text)
+                self._live.flush()
+        except Exception:
+            pass
+        return len(text)
+
+    def flush(self):
+        try:
+            if self._live is not None:
+                self._live.flush()
+        except Exception:
+            pass
+
+    def isatty(self):
+        return False
+
+
+# In a --noconsole build there is no console at start. Route output through
+# the logging stream so print() never crashes and startup logs are kept.
+_console_stream = _ConsoleStream()
+
+sys.stdout = _console_stream
+sys.stderr = _console_stream
+
+
+def _base_path():
+    """Return the project root whether running as script or frozen exe."""
+    if getattr(sys, 'frozen', False):
+        return Path(sys.executable).parent
+    return Path(__file__).resolve().parent.parent
+
+
 # ============================================================
 # CONSOLE
 # ============================================================
@@ -25,7 +90,11 @@ console_visible = False
 
 
 def hide_console():
-    """Hide the console window if running on Windows."""
+    """Destroy any console window.
+
+    Recent logs are kept in the ring buffer, so they are replayed
+    the next time show_console() is called.
+    """
 
     if sys.platform == "win32":
 
@@ -35,28 +104,17 @@ def hide_console():
             "kernel32"
         )
 
-        user32 = ctypes.WinDLL(
-            "user32"
-        )
+        kernel32.FreeConsole()
 
-        SW_HIDE = 0
+        _console_stream.detach()
 
-        hWnd = kernel32.GetConsoleWindow()
+        global console_visible
 
-        if hWnd:
-
-            user32.ShowWindow(
-                hWnd,
-                SW_HIDE
-            )
-
-            global console_visible
-
-            console_visible = False
+        console_visible = False
 
 
 def show_console():
-    """Show the console window if running on Windows."""
+    """Create a fresh console window and replay buffered logs into it."""
 
     if sys.platform == "win32":
 
@@ -66,30 +124,36 @@ def show_console():
             "kernel32"
         )
 
-        user32 = ctypes.WinDLL(
-            "user32"
-        )
+        kernel32.AllocConsole()
 
-        SW_SHOW = 5
+        live_stream = None
 
-        hWnd = kernel32.GetConsoleWindow()
+        try:
 
-        if hWnd:
-
-            user32.ShowWindow(
-                hWnd,
-                SW_SHOW
+            live_stream = open(
+                "CONOUT$",
+                "w",
+                encoding="utf-8",
+                buffering=1
             )
 
-            global console_visible
+        except Exception:
 
-            console_visible = True
+            live_stream = None
+
+        if live_stream is not None:
+
+            _console_stream.attach(
+                live_stream
+            )
+
+        global console_visible
+
+        console_visible = True
 
 
 def toggle_console():
     """Toggle console visibility."""
-
-    global console_visible
 
     if console_visible:
 
@@ -103,6 +167,57 @@ def toggle_console():
 # ============================================================
 # PERSONALITY TRIGGER
 # ============================================================
+
+def _schedule_desktop_reassert(profile_name, delay=3.0):
+    """
+    Re-assert the personality desktop shortly after it opens.
+
+    Browsers like Edge can activate their windows late, which
+    flips the visible desktop back to Desktop One. This runs once
+    on a background thread and pulls focus back, but only while
+    the personality is still open.
+    """
+
+    def _later():
+
+        time.sleep(
+            delay
+        )
+
+        if (
+            profile_name
+            not in json_reader.get_active_personalities()
+        ):
+            return
+
+        profile = (
+            json_reader.get_personality_by_name(
+                profile_name
+            )
+        )
+
+        if profile is None:
+            return
+
+        try:
+
+            virtual_desktop.switch_to_profile_desktop(
+                profile
+            )
+
+        except Exception as error:
+
+            print(
+                f"[Engine] Delayed desktop re-assert "
+                f"failed for '{profile_name}': "
+                f"{error!r}"
+            )
+
+    threading.Thread(
+        target=_later,
+        daemon=True
+    ).start()
+
 
 def handle_shortcut_trigger(
     profile_data
@@ -132,26 +247,53 @@ def handle_shortcut_trigger(
         # Close apps while still on personality desktop.
         # ----------------------------------------------------
 
-        app_handler.close_profile_environment(
-            profile_data
-        )
+        try:
+
+            app_handler.close_profile_environment(
+                profile_data
+            )
+
+        except Exception as error:
+
+            print(
+                f"[Engine] Closing apps failed for "
+                f"'{profile_name}': {error!r}"
+            )
 
         # ----------------------------------------------------
         # Restore system settings.
         # ----------------------------------------------------
 
-        system_settings.restore_profile_settings(
-            profile_name
-        )
+        try:
+
+            system_settings.restore_profile_settings(
+                profile_name
+            )
+
+        except Exception as error:
+
+            print(
+                f"[Engine] Restoring system settings "
+                f"failed for '{profile_name}': {error!r}"
+            )
 
         # ----------------------------------------------------
         # Switch back and delete the desktop if
         # Void Launcher created it.
         # ----------------------------------------------------
 
-        virtual_desktop.restore_previous_desktop(
-            profile_name
-        )
+        try:
+
+            virtual_desktop.restore_previous_desktop(
+                profile_name
+            )
+
+        except Exception as error:
+
+            print(
+                f"[Engine] Desktop restore failed for "
+                f"'{profile_name}': {error!r}"
+            )
 
         # ----------------------------------------------------
         # Mark personality inactive.
@@ -191,19 +333,35 @@ def handle_shortcut_trigger(
     # 1. SWITCH DESKTOP FIRST.
     # --------------------------------------------------------
 
-    desktop_switched = (
+    try:
+
         virtual_desktop.switch_to_profile_desktop(
             profile_data
         )
-    )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Desktop switch failed for "
+            f"'{profile_name}': {error!r}"
+        )
 
     # --------------------------------------------------------
     # 2. Launch applications.
     # --------------------------------------------------------
 
-    app_handler.launch_profile_environment(
-        profile_data
-    )
+    try:
+
+        app_handler.launch_profile_environment(
+            profile_data
+        )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] App launching failed for "
+            f"'{profile_name}': {error!r}"
+        )
 
     # --------------------------------------------------------
     # 3. Open browser windows.
@@ -213,16 +371,40 @@ def handle_shortcut_trigger(
     # new browser window onto this desktop.
     # --------------------------------------------------------
 
-    app_handler.open_profile_tabs(
-        profile_name
-    )
+    try:
+
+        app_handler.open_profile_tabs(
+            profile_name
+        )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Opening tabs failed for "
+            f"'{profile_name}': {error!r}"
+        )
 
     # --------------------------------------------------------
     # 4. Apply system settings.
     # --------------------------------------------------------
 
-    system_settings.apply_profile_settings(
-        profile_data
+    try:
+
+        system_settings.apply_profile_settings(
+            profile_data
+        )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Applying system settings failed "
+            f"for '{profile_name}': {error!r}"
+        )
+
+    # A browser (especially Edge) may still pull focus to another
+    # desktop a moment after opening. Put focus back and keep it.
+    _schedule_desktop_reassert(
+        profile_name
     )
 
     print(
@@ -234,6 +416,30 @@ def handle_shortcut_trigger(
 # ============================================================
 # HOTKEY REGISTRATION
 # ============================================================
+
+def _safe_shortcut_trigger(profile_data):
+    """Run handle_shortcut_trigger without killing the keyboard hook thread."""
+
+    profile_name = (
+        profile_data.get(
+            "name",
+            "Unknown profile"
+        )
+    )
+
+    try:
+
+        handle_shortcut_trigger(
+            profile_data
+        )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Shortcut failed for "
+            f"'{profile_name}': {error!r}"
+        )
+
 
 def register_profile_hotkeys():
     """Register enabled profile shortcuts."""
@@ -286,7 +492,7 @@ def register_profile_hotkeys():
                 keyboard.add_hotkey(
                     shortcut,
                     lambda p=profile:
-                        handle_shortcut_trigger(p)
+                        _safe_shortcut_trigger(p)
                 )
             )
 
@@ -353,9 +559,26 @@ def start_hotkey_listener(
 ):
     """Run the profile hotkey listener."""
 
-    hotkey_handles = (
-        register_profile_hotkeys()
-    )
+    try:
+
+        hotkey_handles = (
+            register_profile_hotkeys()
+        )
+
+        print(
+            f"[Engine] Registered "
+            f"{len(hotkey_handles)} "
+            f"profile hotkey(s)."
+        )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Failed to register "
+            f"profile hotkeys: {error!r}"
+        )
+
+        hotkey_handles = []
 
     config_revision = (
         json_reader.get_config_revision()
@@ -409,7 +632,7 @@ def setup_tray_icon(
     """Set up and run the system tray icon."""
 
     icon_path = (
-        Path(__file__).parent.parent
+        _base_path()
         / "UI"
         / "VL_Logo.ico"
     )
@@ -489,6 +712,8 @@ def setup_tray_icon(
             "[Engine] Exiting..."
         )
 
+        close_settings_window()
+
         stop_event.set()
 
         print(
@@ -525,7 +750,7 @@ def launch_settings():
     try:
 
         ui_path = (
-            Path(__file__).parent.parent
+            _base_path()
             / "UI"
             / "VoidLauncherUI.exe"
         )
@@ -556,6 +781,37 @@ def launch_settings():
         )
 
 
+def close_settings_window():
+    """Close the VoidLauncherUI settings window if it is open."""
+
+    try:
+
+        closed = (
+            app_handler.close_processes_by_name(
+                "VoidLauncherUI.exe"
+            )
+        )
+
+        if closed:
+
+            print(
+                "[Engine] Closed the settings window."
+            )
+
+        else:
+
+            print(
+                "[Engine] No settings window was open."
+            )
+
+    except Exception as error:
+
+        print(
+            f"[Engine] Could not close the settings "
+            f"window: {error}"
+        )
+
+
 # ============================================================
 # MAIN
 # ============================================================
@@ -579,8 +835,8 @@ if __name__ == "__main__":
             winreg.KEY_SET_VALUE
         )
 
-        startup_path = str(
-            Path(__file__).resolve()
+        startup_path = (
+            str(Path(sys.executable))
         )
 
         winreg.SetValueEx(

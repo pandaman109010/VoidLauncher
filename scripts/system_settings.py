@@ -1,7 +1,8 @@
-"""Handle Windows 11 system settings for Void Launcher personalities."""
+"""Handle Windows system settings for Void Launcher personalities."""
 
 import ctypes
 import os
+import platform
 import subprocess
 import time
 import winreg
@@ -14,33 +15,8 @@ _original_settings = {}
 
 
 # ============================================================
-# WINDOWS HELPERS
+# WINDOWS NOTIFICATION
 # ============================================================
-
-def _get_current_user_sid():
-    """Get the SID of the current Windows user."""
-
-    try:
-        output = subprocess.check_output(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                "[System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value"
-            ],
-            text=True,
-            creationflags=subprocess.CREATE_NO_WINDOW
-        )
-
-        return output.strip()
-
-    except Exception as error:
-        print(
-            f"[System Settings] Could not get user SID: {error}"
-        )
-
-        return None
-
 
 def _broadcast_setting_change():
     """Tell Windows that a system setting changed."""
@@ -59,7 +35,7 @@ def _broadcast_setting_change():
             WM_SETTINGCHANGE,
             0,
             "Windows",
-            SMTO_ABORTIF_HUNG if False else SMTO_ABORTIFHUNG,
+            SMTO_ABORTIFHUNG,
             5000,
             ctypes.byref(result)
         )
@@ -142,50 +118,139 @@ def set_volume(volume_level):
 def _get_dnd_registry_value():
     """
     Read the Windows 11 Do Not Disturb CloudStore value.
+
+    Returns (registry_path, bytes) for the key that actually holds
+    the live DND state on this build, or (None, None) if none does.
+    The path is returned so writes land on the same key the OS
+    reads from.
     """
 
-    try:
-        base_path = (
-            r"Software\Microsoft\Windows\CurrentVersion"
-            r"\CloudStore\Store\Cache\DefaultAccount"
-            r"\$$windows.data.notifications.quiethourssettings"
-            r"\Current"
-        )
+    root = (
+        r"Software\Microsoft\Windows\CurrentVersion"
+        r"\CloudStore\Store\DefaultAccount\Current"
+    )
 
-        key = winreg.OpenKey(
+    try:
+        base_key = winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
-            base_path,
+            root,
             0,
             winreg.KEY_READ
         )
+    except FileNotFoundError:
+        print(
+            "[System Settings] DND CloudStore root "
+            "was not found."
+        )
+        return None, None
 
+    try:
+        index = 0
+
+        while True:
+            try:
+                child = winreg.EnumKey(
+                    base_key,
+                    index
+                )
+                index += 1
+            except OSError:
+                break
+
+            if (
+                "donotdisturb.quiethourssettings"
+                not in child
+            ):
+                continue
+
+            parent = root + "\\" + child
+
+            data = _read_dnd_data_at(
+                parent
+            )
+
+            if data is not None:
+                return parent, data
+
+            try:
+                sub_key = winreg.OpenKey(
+                    winreg.HKEY_CURRENT_USER,
+                    parent,
+                    0,
+                    winreg.KEY_READ
+                )
+            except OSError:
+                continue
+
+            try:
+                sub_index = 0
+
+                while True:
+                    try:
+                        sub_child = winreg.EnumKey(
+                            sub_key,
+                            sub_index
+                        )
+                        sub_index += 1
+                    except OSError:
+                        break
+
+                    sub_path = (
+                        parent
+                        + "\\" + sub_child
+                    )
+
+                    data = (
+                        _read_dnd_data_at(
+                            sub_path
+                        )
+                    )
+
+                    if data is not None:
+                        return sub_path, data
+            finally:
+                winreg.CloseKey(sub_key)
+    finally:
+        winreg.CloseKey(base_key)
+
+    print(
+        "[System Settings] DND CloudStore key "
+        "was not found."
+    )
+
+    return None, None
+
+
+def _read_dnd_data_at(path):
+    """Return the bytes of a key's Data value, or None."""
+
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            path,
+            0,
+            winreg.KEY_READ
+        )
+    except OSError:
+        return None
+
+    try:
         data = winreg.QueryValueEx(
             key,
             "Data"
         )[0]
-
+    except OSError:
+        return None
+    finally:
         winreg.CloseKey(key)
 
-        if not isinstance(data, bytes):
-            return None
-
+    if isinstance(
+        data,
+        bytes
+    ):
         return data
 
-    except FileNotFoundError:
-        print(
-            "[System Settings] DND CloudStore key "
-            "was not found."
-        )
-
-        return None
-
-    except Exception as error:
-        print(
-            f"[System Settings] Could not read DND "
-            f"CloudStore: {error}"
-        )
-
-        return None
+    return None
 
 
 def _dnd_data_is_enabled(data):
@@ -194,31 +259,73 @@ def _dnd_data_is_enabled(data):
     if not data:
         return None
 
-    try:
-        text = data.decode(
-            "utf-16-le",
-            errors="ignore"
-        )
+    on_marker = (
+        "Microsoft.QuietHoursProfile.PriorityOnly"
+    ).encode(
+        "utf-16-le"
+    )
 
-        if "Microsoft.QuietHoursProfile.PriorityOnly" in text:
-            return True
+    off_marker = (
+        "Microsoft.QuietHoursProfile.Unrestricted"
+    ).encode(
+        "utf-16-le"
+    )
 
-        if "Microsoft.QuietHoursProfile.Unrestricted" in text:
-            return False
+    # Search the raw bytes: the blob header is 31 bytes (odd), so
+    # decoding the whole blob from byte 0 shifts the marker out of
+    # alignment on some builds.
+    if on_marker in data:
+        return True
 
-    except Exception:
-        pass
+    if off_marker in data:
+        return False
 
     return None
 
 
-def get_do_not_disturb():
-    """Get the actual Windows 11 Do Not Disturb state."""
+def _is_windows_11():
+    """Return True when running on Windows 11 or newer."""
 
-    data = _get_dnd_registry_value()
+    try:
+
+        version = platform.version()
+
+        numbers = [
+            int(number)
+            for number in version.split(".")
+            if number.isdigit()
+        ]
+
+        if numbers:
+            return numbers[-1] >= 22000
+
+    except Exception:
+        pass
+
+    return False
+
+
+def get_do_not_disturb():
+    """Get the actual Do Not Disturb state."""
+
+    if _is_windows_11():
+        return _get_dnd_win11_state()
+
+    return _get_dnd_win10_state()
+
+
+def _get_dnd_win11_state():
+    """Get the Windows 11 CloudStore Do Not Disturb state."""
+
+    path, data = _get_dnd_registry_value()
 
     if data is None:
         return None
+
+    print(
+        f"[System Settings] DND registry key: "
+        f"{path}"
+    )
 
     state = _dnd_data_is_enabled(data)
 
@@ -229,6 +336,57 @@ def get_do_not_disturb():
         )
 
         return None
+
+    print(
+        f"[System Settings] Current DND: "
+        f"{'ON' if state else 'OFF'}."
+    )
+
+    return state
+
+
+def _get_dnd_win10_state():
+    """Get the Windows 10 Do Not Disturb state.
+
+    The notification toast master switch is a DWORD under
+    Notifications\\Settings. 0 silences toasts (Do Not Disturb),
+    1 or absent allows them.
+    """
+
+    path = (
+        r"Software\Microsoft\Windows\CurrentVersion"
+        r"\Notifications\Settings"
+    )
+
+    try:
+
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            path,
+            0,
+            winreg.KEY_READ
+        )
+
+        try:
+
+            toasts_enabled, _ = winreg.QueryValueEx(
+                key,
+                "NOC_GLOBAL_SETTING_TOASTS_ENABLED"
+            )
+
+        except FileNotFoundError:
+            toasts_enabled = 1
+
+        winreg.CloseKey(key)
+
+    except OSError as error:
+        print(
+            f"[System Settings] Could not read "
+            f"Windows 10 DND state: {error}"
+        )
+        return None
+
+    state = (int(toasts_enabled) == 0)
 
     print(
         f"[System Settings] Current DND: "
@@ -321,7 +479,12 @@ def _restart_notification_service():
 
 
 def _create_dnd_data(enabled):
-    """Create Windows 11 CloudStore DND data."""
+    """Create Windows 11 CloudStore DND data.
+
+    Fallback for when no live blob exists to patch. Mirrors the
+    116-byte layout this Windows version actually writes (verified
+    against test/dnd-dump.ps1).
+    """
 
     if enabled:
         profile_name = (
@@ -357,15 +520,18 @@ def _create_dnd_data(enabled):
         byteorder="little"
     )
 
-    profile_bytes = profile_name.encode(
-        "utf-16-le"
-    )
-
     data = bytearray(
         [
+            0x43,
+            0x42,
+            0x01,
+            0x00,
+            0x0A,
             0x02,
+            0x01,
             0x00,
-            0x00,
+            0x2A,
+            0x06,
             0x00
         ]
     )
@@ -374,10 +540,6 @@ def _create_dnd_data(enabled):
 
     data.extend(
         [
-            0x00,
-            0x00,
-            0x00,
-            0x00,
             0x43,
             0x42,
             0x01,
@@ -392,32 +554,143 @@ def _create_dnd_data(enabled):
     )
 
     data.extend(
+        profile_name.encode(
+            "utf-16-le"
+        )
+    )
+
+    data.extend(
         [
-            0x00,
             0xCA,
             0x28,
+            0x00,
+            0x00,
+            0x00,
             0x00,
             0x00
         ]
     )
 
-    data.extend(profile_bytes)
-
     return bytes(data)
 
 
-def _set_dnd_cloudstore(enabled):
-    """Write the Windows 11 DND CloudStore value."""
+def _patch_dnd_data(
+    data,
+    enabled
+):
+    """Patch an existing CloudStore blob to the wanted DND state.
 
-    try:
-        path = (
-            r"Software\Microsoft\Windows\CurrentVersion"
-            r"\CloudStore\Store\Cache\DefaultAccount"
-            r"\$$windows.data.notifications.quiethourssettings"
-            r"\Current"
+    The existing blob carries the OS session bytes and timestamps,
+    so swapping only the profile string is accepted on far more
+    Windows builds than rebuilding the value from scratch. The
+    version byte at offset 10 is bumped by 2 like Windows does on
+    every change, so the OS can notice the update even when the
+    resulting state is unchanged.
+    """
+
+    if not isinstance(
+        data,
+        bytes
+    ):
+        return None
+
+    wanted = (
+        "Microsoft.QuietHoursProfile.PriorityOnly"
+        if enabled
+        else "Microsoft.QuietHoursProfile.Unrestricted"
+    )
+
+    current = (
+        "Microsoft.QuietHoursProfile.PriorityOnly"
+        if not enabled
+        else "Microsoft.QuietHoursProfile.Unrestricted"
+    )
+
+    wanted_bytes = wanted.encode(
+        "utf-16-le"
+    )
+
+    current_bytes = current.encode(
+        "utf-16-le"
+    )
+
+    if len(wanted_bytes) != len(current_bytes):
+        return None
+
+    if wanted_bytes not in data:
+        index = data.find(
+            current_bytes
         )
 
-        data = _create_dnd_data(enabled)
+        if index < 0:
+            return None
+
+        data = (
+            data[:index]
+            + wanted_bytes
+            + data[index + len(current_bytes):]
+        )
+
+    # 116-byte 2024+ layout starts 43 42 01 00 0A 02; offset 10 is
+    # a version counter the OS bumps by 2 per change. Bump it even
+    # when the string was already the wanted one, so writing the
+    # blob again forces the OS to reprocess it.
+    if (
+        len(data) >= 11
+        and data[0:2] == b"\x43\x42"
+    ):
+        data = (
+            data[:10]
+            + bytes(
+                [
+                    (data[10] + 2) & 0xFF
+                ]
+            )
+            + data[11:]
+        )
+
+    return data
+
+
+def _set_dnd_cloudstore(enabled):
+    """Write the Windows 11 DND CloudStore value.
+
+    Writes back to the exact key the OS reads (the one found by
+    _get_dnd_registry_value), preserving the blob's own session
+    bytes. If it does not exist yet, the key is created under the
+    default account's GUID with a freshly generated blob.
+    """
+
+    try:
+        path, current_data = (
+            _get_dnd_registry_value()
+        )
+
+        data = _patch_dnd_data(
+            current_data,
+            enabled
+        )
+
+        if data is None:
+
+            data = (
+                _create_dnd_data(
+                    enabled
+                )
+            )
+
+        if path is None:
+
+            path = _build_default_dnd_path()
+
+        if path is None:
+
+            print(
+                "[System Settings] Nothing to write: "
+                "no DND CloudStore key exists."
+            )
+
+            return False
 
         key = winreg.CreateKey(
             winreg.HKEY_CURRENT_USER,
@@ -435,23 +708,128 @@ def _set_dnd_cloudstore(enabled):
         winreg.CloseKey(key)
 
         print(
-            "[System Settings] Updated Windows 11 "
-            "DND CloudStore."
+            f"[System Settings] Updated DND "
+            f"CloudStore: {path}"
         )
 
         return True
 
     except Exception as error:
         print(
-            f"[System Settings] Could not update "
-            f"DND CloudStore: {error}"
+            f"[System Settings] DND update failed: "
+            f"{error}"
+        )
+
+        return False
+
+
+def _build_default_dnd_path():
+    """Build the DND CloudStore path for this default account.
+
+    Reuses the GUID from any existing donotdisturb sibling key so
+    the created key lives under the same account GUID, falling back
+    to the well-known default account GUID.
+    """
+
+    root = (
+        r"Software\Microsoft\Windows\CurrentVersion"
+        r"\CloudStore\Store\DefaultAccount\Current"
+    )
+
+    account_guid = (
+        r"{97c6ee2c-3831-4880-9c15-e7de7ca182a2}"
+    )
+
+    try:
+        base_key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            root,
+            0,
+            winreg.KEY_READ
+        )
+    except FileNotFoundError:
+        return None
+
+    try:
+        index = 0
+
+        while True:
+            try:
+                child = winreg.EnumKey(
+                    base_key,
+                    index
+                )
+                index += 1
+            except OSError:
+                break
+
+            if (
+                "$windows.data.donotdisturb" in child
+                and child.startswith("{")
+            ):
+                account_guid = (
+                    child[:child.index("$")]
+                )
+                break
+    finally:
+        winreg.CloseKey(base_key)
+
+    return (
+        root
+        + "\\" + account_guid
+        + "$windows.data.donotdisturb.quiethourssettings"
+        + "\\windows.data.donotdisturb.quiethourssettings"
+    )
+
+
+def _set_dnd_win10(enabled):
+    """Set the Windows 10 Do Not Disturb state."""
+
+    path = (
+        r"Software\Microsoft\Windows\CurrentVersion"
+        r"\Notifications\Settings"
+    )
+
+    toasts_enabled = 0 if enabled else 1
+
+    try:
+
+        key = winreg.CreateKey(
+            winreg.HKEY_CURRENT_USER,
+            path
+        )
+
+        winreg.SetValueEx(
+            key,
+            "NOC_GLOBAL_SETTING_TOASTS_ENABLED",
+            0,
+            winreg.REG_DWORD,
+            toasts_enabled
+        )
+
+        winreg.CloseKey(key)
+
+        print(
+            f"[System Settings] Windows 10 DND set to "
+            f"{'ON' if enabled else 'OFF'} "
+            f"(NOC_GLOBAL_SETTING_TOASTS_ENABLED="
+            f"{toasts_enabled})."
+        )
+
+        return True
+
+    except Exception as error:
+
+        print(
+            f"[System Settings] Could not set "
+            f"Windows 10 DND: {error}"
         )
 
         return False
 
 
 def set_do_not_disturb(enabled):
-    """Set the actual Windows 11 Do Not Disturb state."""
+    """Set the actual Do Not Disturb state."""
 
     enabled = bool(enabled)
 
@@ -460,7 +838,12 @@ def set_do_not_disturb(enabled):
         f"to {'ON' if enabled else 'OFF'}..."
     )
 
-    if not _set_dnd_cloudstore(enabled):
+    if _is_windows_11():
+        ok = _set_dnd_cloudstore(enabled)
+    else:
+        ok = _set_dnd_win10(enabled)
+
+    if not ok:
         return False
 
     _broadcast_setting_change()
@@ -616,60 +999,6 @@ def save_current_wallpaper(profile_name):
             f"[System Settings] Saved original wallpaper "
             f"for '{profile_name}'."
         )
-
-
-def apply_wallpaper(profile_data):
-    """Save the current wallpaper and apply the profile wallpaper."""
-
-    profile_name = profile_data.get("name")
-
-    if not profile_name:
-        return
-
-    settings = profile_data.get(
-        "wallpaper-switch",
-        {}
-    )
-
-    if not settings.get("enabled", False):
-        return
-
-    wallpaper_path = settings.get(
-        "wallpaper-path",
-        ""
-    )
-
-    if not wallpaper_path:
-        print(
-            f"[System Settings] No wallpaper configured "
-            f"for '{profile_name}'."
-        )
-        return
-
-    save_current_wallpaper(profile_name)
-
-    set_wallpaper(wallpaper_path)
-
-
-def restore_wallpaper(profile_name):
-    """Restore the wallpaper from before the personality."""
-
-    if profile_name not in _original_settings:
-        return
-
-    original_wallpaper = _original_settings[
-        profile_name
-    ].get("wallpaper")
-
-    if not original_wallpaper:
-        return
-
-    set_wallpaper(original_wallpaper)
-
-    print(
-        f"[System Settings] Restored original wallpaper "
-        f"for '{profile_name}'."
-    )
 
 
 # ============================================================

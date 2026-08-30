@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 from threading import RLock
 
@@ -7,7 +8,11 @@ _config_cache = {}
 _config_signature = None
 _config_revision = 0
 _config_lock = RLock()
-_config_path = Path(__file__).resolve().parent / "config.json"
+
+if getattr(sys, 'frozen', False):
+    _config_path = Path(sys.executable).parent / "scripts" / "config.json"
+else:
+    _config_path = Path(__file__).resolve().parent / "config.json"
 
 # Tracks profiles toggled during this engine session.
 _active_environments = set()
