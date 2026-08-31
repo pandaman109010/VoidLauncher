@@ -1,9 +1,10 @@
-"""Handle Windows system settings for Void Launcher personalities."""
+# Windows system settings for Void Launcher personalities.
 
 import ctypes
 import os
 import platform
 import subprocess
+import sys
 import time
 import winreg
 
@@ -14,12 +15,10 @@ from pycaw.pycaw import AudioUtilities
 _original_settings = {}
 
 
-# ============================================================
 # WINDOWS NOTIFICATION
-# ============================================================
 
 def _broadcast_setting_change():
-    """Tell Windows that a system setting changed."""
+    # Tell Windows that a system setting changed
 
     try:
         HWND_BROADCAST = 0xFFFF
@@ -47,12 +46,10 @@ def _broadcast_setting_change():
         )
 
 
-# ============================================================
 # VOLUME
-# ============================================================
 
 def get_volume():
-    """Get the current Windows system volume."""
+    # Get the current Windows system volume
 
     try:
         devices = AudioUtilities.GetSpeakers()
@@ -79,7 +76,7 @@ def get_volume():
 
 
 def set_volume(volume_level):
-    """Set the Windows system volume."""
+    # Set the Windows system volume
 
     try:
         volume_level = max(
@@ -111,19 +108,10 @@ def set_volume(volume_level):
         return False
 
 
-# ============================================================
 # WINDOWS 11 DND / FOCUS ASSIST
-# ============================================================
 
 def _get_dnd_registry_value():
-    """
-    Read the Windows 11 Do Not Disturb CloudStore value.
-
-    Returns (registry_path, bytes) for the key that actually holds
-    the live DND state on this build, or (None, None) if none does.
-    The path is returned so writes land on the same key the OS
-    reads from.
-    """
+    # Read the Windows 11 Do Not Disturb CloudStore value
 
     root = (
         r"Software\Microsoft\Windows\CurrentVersion"
@@ -222,7 +210,7 @@ def _get_dnd_registry_value():
 
 
 def _read_dnd_data_at(path):
-    """Return the bytes of a key's Data value, or None."""
+    # Return the bytes of a key's Data value, or None
 
     try:
         key = winreg.OpenKey(
@@ -254,7 +242,7 @@ def _read_dnd_data_at(path):
 
 
 def _dnd_data_is_enabled(data):
-    """Determine whether Windows DND is enabled."""
+    # Determine whether Windows DND is enabled
 
     if not data:
         return None
@@ -284,7 +272,7 @@ def _dnd_data_is_enabled(data):
 
 
 def _is_windows_11():
-    """Return True when running on Windows 11 or newer."""
+    # Return True when running on Windows 11 or newer
 
     try:
 
@@ -306,7 +294,7 @@ def _is_windows_11():
 
 
 def get_do_not_disturb():
-    """Get the actual Do Not Disturb state."""
+    # Get the actual Do Not Disturb state
 
     if _is_windows_11():
         return _get_dnd_win11_state()
@@ -315,7 +303,7 @@ def get_do_not_disturb():
 
 
 def _get_dnd_win11_state():
-    """Get the Windows 11 CloudStore Do Not Disturb state."""
+    # Get the Windows 11 CloudStore Do Not Disturb state
 
     path, data = _get_dnd_registry_value()
 
@@ -346,12 +334,7 @@ def _get_dnd_win11_state():
 
 
 def _get_dnd_win10_state():
-    """Get the Windows 10 Do Not Disturb state.
-
-    The notification toast master switch is a DWORD under
-    Notifications\\Settings. 0 silences toasts (Do Not Disturb),
-    1 or absent allows them.
-    """
+    # Get the Windows 10 Do Not Disturb state
 
     path = (
         r"Software\Microsoft\Windows\CurrentVersion"
@@ -397,7 +380,7 @@ def _get_dnd_win10_state():
 
 
 def _find_quiet_hours_service():
-    """Find the current user's Windows notification service."""
+    # Find the current user's Windows notification service
 
     try:
         output = subprocess.check_output(
@@ -433,7 +416,7 @@ def _find_quiet_hours_service():
 
 
 def _restart_notification_service():
-    """Restart the user's notification service."""
+    # Restart the user's notification service
 
     service_name = _find_quiet_hours_service()
 
@@ -479,12 +462,7 @@ def _restart_notification_service():
 
 
 def _create_dnd_data(enabled):
-    """Create Windows 11 CloudStore DND data.
-
-    Fallback for when no live blob exists to patch. Mirrors the
-    116-byte layout this Windows version actually writes (verified
-    against test/dnd-dump.ps1).
-    """
+    # Create Windows 11 CloudStore DND data
 
     if enabled:
         profile_name = (
@@ -578,15 +556,7 @@ def _patch_dnd_data(
     data,
     enabled
 ):
-    """Patch an existing CloudStore blob to the wanted DND state.
-
-    The existing blob carries the OS session bytes and timestamps,
-    so swapping only the profile string is accepted on far more
-    Windows builds than rebuilding the value from scratch. The
-    version byte at offset 10 is bumped by 2 like Windows does on
-    every change, so the OS can notice the update even when the
-    resulting state is unchanged.
-    """
+    # Patch an existing CloudStore blob to the wanted DND state
 
     if not isinstance(
         data,
@@ -653,13 +623,7 @@ def _patch_dnd_data(
 
 
 def _set_dnd_cloudstore(enabled):
-    """Write the Windows 11 DND CloudStore value.
-
-    Writes back to the exact key the OS reads (the one found by
-    _get_dnd_registry_value), preserving the blob's own session
-    bytes. If it does not exist yet, the key is created under the
-    default account's GUID with a freshly generated blob.
-    """
+    # Write the Windows 11 DND CloudStore value
 
     try:
         path, current_data = (
@@ -724,12 +688,7 @@ def _set_dnd_cloudstore(enabled):
 
 
 def _build_default_dnd_path():
-    """Build the DND CloudStore path for this default account.
-
-    Reuses the GUID from any existing donotdisturb sibling key so
-    the created key lives under the same account GUID, falling back
-    to the well-known default account GUID.
-    """
+    # Build the DND CloudStore path for this default account
 
     root = (
         r"Software\Microsoft\Windows\CurrentVersion"
@@ -783,7 +742,7 @@ def _build_default_dnd_path():
 
 
 def _set_dnd_win10(enabled):
-    """Set the Windows 10 Do Not Disturb state."""
+    # Set the Windows 10 Do Not Disturb state
 
     path = (
         r"Software\Microsoft\Windows\CurrentVersion"
@@ -829,7 +788,7 @@ def _set_dnd_win10(enabled):
 
 
 def set_do_not_disturb(enabled):
-    """Set the actual Do Not Disturb state."""
+    # Set the actual Do Not Disturb state
 
     enabled = bool(enabled)
 
@@ -870,12 +829,10 @@ def set_do_not_disturb(enabled):
     return False
 
 
-# ============================================================
 # WALLPAPER
-# ============================================================
 
 def get_wallpaper():
-    """Get the current Windows desktop wallpaper path."""
+    # Get the current Windows desktop wallpaper path
 
     try:
         SPI_GETDESKWALLPAPER = 0x0073
@@ -921,8 +878,92 @@ def get_wallpaper():
         return None
 
 
+def _resolve_wallpaper_path(wallpaper_path):
+    # Turn a wallpaper setting into a usable file path on any machine
+
+    raw = str(
+        wallpaper_path
+    ).strip()
+
+    if not raw:
+        return None
+
+    expanded = os.path.expanduser(
+        os.path.expandvars(
+            raw
+        )
+    )
+
+    if os.path.isfile(
+        expanded
+    ):
+        return os.path.abspath(
+            expanded
+        )
+
+    if os.path.isabs(
+        expanded
+    ):
+        return expanded
+
+    # Soft-coded location. Resolve its filename against every
+    # place the wallpaper could live on other machines.
+    basename = os.path.basename(
+        raw
+    )
+
+    candidates = [
+        expanded
+    ]
+
+    if getattr(
+        sys,
+        'frozen',
+        False
+    ):
+
+        meipass = getattr(
+            sys,
+            '_MEIPASS',
+            None
+        )
+
+        if meipass:
+
+            candidates.append(
+                os.path.join(
+                    meipass,
+                    'scripts',
+                    basename
+                )
+            )
+
+    candidates.append(
+        os.path.join(
+            os.path.dirname(
+                os.path.abspath(__file__)
+            ),
+            basename
+        )
+    )
+
+    for candidate in candidates:
+
+        if os.path.isfile(
+            candidate
+        ):
+
+            return os.path.abspath(
+                candidate
+            )
+
+    return os.path.abspath(
+        expanded
+    )
+
+
 def set_wallpaper(wallpaper_path):
-    """Change the Windows desktop wallpaper."""
+    # Change the Windows desktop wallpaper
 
     try:
         if not wallpaper_path:
@@ -932,11 +973,16 @@ def set_wallpaper(wallpaper_path):
             )
             return False
 
-        wallpaper_path = os.path.expandvars(
-            os.path.expanduser(
-                str(wallpaper_path)
-            )
+        wallpaper_path = _resolve_wallpaper_path(
+            wallpaper_path
         )
+
+        if not wallpaper_path:
+            print(
+                "[System Settings] No wallpaper path "
+                "was provided."
+            )
+            return False
 
         if not os.path.isfile(wallpaper_path):
             print(
@@ -980,7 +1026,7 @@ def set_wallpaper(wallpaper_path):
 
 
 def save_current_wallpaper(profile_name):
-    """Save the wallpaper before changing it."""
+    # Save the wallpaper before changing it
 
     if profile_name not in _original_settings:
         _original_settings[profile_name] = {}
@@ -1001,12 +1047,10 @@ def save_current_wallpaper(profile_name):
         )
 
 
-# ============================================================
 # SAVE CURRENT SETTINGS
-# ============================================================
 
 def save_current_settings(profile_name):
-    """Save the current Windows settings before changing them."""
+    # Save the current Windows settings before changing them
 
     if profile_name not in _original_settings:
         _original_settings[profile_name] = {}
@@ -1035,12 +1079,10 @@ def save_current_settings(profile_name):
         )
 
 
-# ============================================================
 # APPLY PERSONALITY SETTINGS
-# ============================================================
 
 def apply_profile_settings(profile_data):
-    """Save current settings and apply personality settings."""
+    # Save current settings and apply personality settings
 
     profile_name = profile_data.get("name")
 
@@ -1057,9 +1099,7 @@ def apply_profile_settings(profile_data):
         {}
     )
 
-    # --------------------------------------------------------
     # Save settings
-    # --------------------------------------------------------
 
     if settings.get("enabled", False):
         save_current_settings(profile_name)
@@ -1067,9 +1107,7 @@ def apply_profile_settings(profile_data):
     if wallpaper_settings.get("enabled", False):
         save_current_wallpaper(profile_name)
 
-    # --------------------------------------------------------
     # Volume
-    # --------------------------------------------------------
 
     if settings.get("enabled", False):
 
@@ -1080,18 +1118,14 @@ def apply_profile_settings(profile_data):
         if volume_level is not None:
             set_volume(volume_level)
 
-        # ----------------------------------------------------
         # Do Not Disturb
-        # ----------------------------------------------------
 
         if "do-not-disturb" in settings:
             set_do_not_disturb(
                 settings["do-not-disturb"]
             )
 
-    # --------------------------------------------------------
     # Wallpaper
-    # --------------------------------------------------------
 
     if wallpaper_settings.get("enabled", False):
 
@@ -1104,12 +1138,10 @@ def apply_profile_settings(profile_data):
             set_wallpaper(wallpaper_path)
 
 
-# ============================================================
 # RESTORE PERSONALITY SETTINGS
-# ============================================================
 
 def restore_profile_settings(profile_name):
-    """Restore the settings from before the personality activated."""
+    # Restore the settings from before the personality activated
 
     if profile_name not in _original_settings:
         print(
@@ -1123,27 +1155,21 @@ def restore_profile_settings(profile_name):
         profile_name
     )
 
-    # --------------------------------------------------------
     # Restore volume
-    # --------------------------------------------------------
 
     if settings.get("volume") is not None:
         set_volume(
             settings["volume"]
         )
 
-    # --------------------------------------------------------
     # Restore DND
-    # --------------------------------------------------------
 
     if settings.get("do-not-disturb") is not None:
         set_do_not_disturb(
             settings["do-not-disturb"]
         )
 
-    # --------------------------------------------------------
     # Restore wallpaper
-    # --------------------------------------------------------
 
     if settings.get("wallpaper"):
         set_wallpaper(

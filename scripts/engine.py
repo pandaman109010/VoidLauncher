@@ -19,11 +19,7 @@ import virtual_desktop
 
 
 class _ConsoleStream:
-    """A stdout/stderr sink that buffers output and attaches to a live console.
-
-    Logs written while no console exists are kept in a rolling ring buffer,
-    so 'Show Console' can replay them into the freshly allocated console.
-    """
+    # A stdout/stderr sink that buffers output and attaches to a live console
 
     def __init__(self, max_lines=4000):
         self._buffer = deque(maxlen=max_lines)
@@ -76,25 +72,19 @@ sys.stderr = _console_stream
 
 
 def _base_path():
-    """Return the project root whether running as script or frozen exe."""
+    # Return the project root whether running as script or frozen exe
     if getattr(sys, 'frozen', False):
         return Path(sys.executable).parent
     return Path(__file__).resolve().parent.parent
 
 
-# ============================================================
 # CONSOLE
-# ============================================================
 
 console_visible = False
 
 
 def hide_console():
-    """Destroy any console window.
-
-    Recent logs are kept in the ring buffer, so they are replayed
-    the next time show_console() is called.
-    """
+    # Destroy any console window
 
     if sys.platform == "win32":
 
@@ -114,7 +104,7 @@ def hide_console():
 
 
 def show_console():
-    """Create a fresh console window and replay buffered logs into it."""
+    # Create a fresh console window and replay buffered logs into it
 
     if sys.platform == "win32":
 
@@ -153,7 +143,7 @@ def show_console():
 
 
 def toggle_console():
-    """Toggle console visibility."""
+    # Toggle console visibility
 
     if console_visible:
 
@@ -164,19 +154,10 @@ def toggle_console():
         show_console()
 
 
-# ============================================================
 # PERSONALITY TRIGGER
-# ============================================================
 
 def _schedule_desktop_reassert(profile_name, delay=3.0):
-    """
-    Re-assert the personality desktop shortly after it opens.
-
-    Browsers like Edge can activate their windows late, which
-    flips the visible desktop back to Desktop One. This runs once
-    on a background thread and pulls focus back, but only while
-    the personality is still open.
-    """
+    # Re-assert the personality desktop shortly after it opens
 
     def _later():
 
@@ -222,7 +203,7 @@ def _schedule_desktop_reassert(profile_name, delay=3.0):
 def handle_shortcut_trigger(
     profile_data
 ):
-    """Activate or deactivate a personality."""
+    # Activate or deactivate a personality
 
     profile_name = profile_data[
         "name"
@@ -232,9 +213,7 @@ def handle_shortcut_trigger(
         json_reader.get_active_personalities()
     )
 
-    # ========================================================
     # CLOSE PERSONALITY
-    # ========================================================
 
     if profile_name in active_environments:
 
@@ -243,9 +222,7 @@ def handle_shortcut_trigger(
             f"{profile_name}"
         )
 
-        # ----------------------------------------------------
         # Close apps while still on personality desktop.
-        # ----------------------------------------------------
 
         try:
 
@@ -260,9 +237,7 @@ def handle_shortcut_trigger(
                 f"'{profile_name}': {error!r}"
             )
 
-        # ----------------------------------------------------
         # Restore system settings.
-        # ----------------------------------------------------
 
         try:
 
@@ -277,10 +252,7 @@ def handle_shortcut_trigger(
                 f"failed for '{profile_name}': {error!r}"
             )
 
-        # ----------------------------------------------------
-        # Switch back and delete the desktop if
-        # Void Launcher created it.
-        # ----------------------------------------------------
+        # Switch back and delete the desktop if Void Launcher created it.
 
         try:
 
@@ -295,9 +267,7 @@ def handle_shortcut_trigger(
                 f"'{profile_name}': {error!r}"
             )
 
-        # ----------------------------------------------------
         # Mark personality inactive.
-        # ----------------------------------------------------
 
         json_reader.set_personality_state(
             profile_name,
@@ -311,27 +281,21 @@ def handle_shortcut_trigger(
 
         return
 
-    # ========================================================
     # OPEN PERSONALITY
-    # ========================================================
 
     print(
         f"[Engine] Opening personality: "
         f"{profile_name}"
     )
 
-    # --------------------------------------------------------
     # Mark active.
-    # --------------------------------------------------------
 
     json_reader.set_personality_state(
         profile_name,
         is_active=True
     )
 
-    # --------------------------------------------------------
     # 1. SWITCH DESKTOP FIRST.
-    # --------------------------------------------------------
 
     try:
 
@@ -346,9 +310,7 @@ def handle_shortcut_trigger(
             f"'{profile_name}': {error!r}"
         )
 
-    # --------------------------------------------------------
     # 2. Launch applications.
-    # --------------------------------------------------------
 
     try:
 
@@ -363,13 +325,7 @@ def handle_shortcut_trigger(
             f"'{profile_name}': {error!r}"
         )
 
-    # --------------------------------------------------------
-    # 3. Open browser windows.
-    #
-    # This happens AFTER the desktop switch.
-    # app_handler.py then explicitly moves each
-    # new browser window onto this desktop.
-    # --------------------------------------------------------
+    # 3. Open browser windows after the desktop switch (moved onto this desktop).
 
     try:
 
@@ -384,9 +340,7 @@ def handle_shortcut_trigger(
             f"'{profile_name}': {error!r}"
         )
 
-    # --------------------------------------------------------
     # 4. Apply system settings.
-    # --------------------------------------------------------
 
     try:
 
@@ -413,12 +367,10 @@ def handle_shortcut_trigger(
     )
 
 
-# ============================================================
 # HOTKEY REGISTRATION
-# ============================================================
 
 def _safe_shortcut_trigger(profile_data):
-    """Run handle_shortcut_trigger without killing the keyboard hook thread."""
+    # Run handle_shortcut_trigger without killing the keyboard hook thread
 
     profile_name = (
         profile_data.get(
@@ -442,7 +394,7 @@ def _safe_shortcut_trigger(profile_data):
 
 
 def register_profile_hotkeys():
-    """Register enabled profile shortcuts."""
+    # Register enabled profile shortcuts
 
     profiles = (
         json_reader.get_all_personalities()
@@ -536,7 +488,7 @@ def register_profile_hotkeys():
 def unregister_profile_hotkeys(
     hotkey_handles
 ):
-    """Remove registered profile hotkeys."""
+    # Remove registered profile hotkeys
 
     for hotkey_handle in hotkey_handles:
 
@@ -550,14 +502,12 @@ def unregister_profile_hotkeys(
             pass
 
 
-# ============================================================
 # HOTKEY LISTENER
-# ============================================================
 
 def start_hotkey_listener(
     stop_event
 ):
-    """Run the profile hotkey listener."""
+    # Run the profile hotkey listener
 
     try:
 
@@ -622,14 +572,12 @@ def start_hotkey_listener(
     )
 
 
-# ============================================================
 # TRAY ICON
-# ============================================================
 
 def setup_tray_icon(
     stop_event
 ):
-    """Set up and run the system tray icon."""
+    # Set up and run the system tray icon
 
     icon_path = (
         _base_path()
@@ -740,12 +688,10 @@ def setup_tray_icon(
     icon.run()
 
 
-# ============================================================
 # SETTINGS
-# ============================================================
 
 def launch_settings():
-    """Launch the VoidLauncherUI.exe."""
+    # Launch the VoidLauncherUI.exe
 
     try:
 
@@ -782,7 +728,7 @@ def launch_settings():
 
 
 def close_settings_window():
-    """Close the VoidLauncherUI settings window if it is open."""
+    # Close the VoidLauncherUI settings window if it is open
 
     try:
 
@@ -812,9 +758,7 @@ def close_settings_window():
         )
 
 
-# ============================================================
 # MAIN
-# ============================================================
 
 if __name__ == "__main__":
 

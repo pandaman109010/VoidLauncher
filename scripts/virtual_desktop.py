@@ -1,19 +1,5 @@
-"""Handle Windows virtual desktops for Void Launcher.
-
-Supports:
-    - Windows 10 2004+
-    - Windows 11
-    - Real Windows virtual desktop names
-    - Desktop creation
-    - Desktop switching
-    - Desktop deletion
-    - Multiple active personalities
-    - Safe tracking using desktop GUIDs
-
-pyvda is still used for the actual desktop operations.
-Desktop names use pyvda's rename API where available (Windows 11),
-with the Explorer registry fallback for Windows 10.
-"""
+# Void Launcher virtual desktop handling for Windows 10 (2004+) and
+# Windows 11: create, name, switch, delete, and track desktops by GUID.
 
 import ctypes
 import uuid
@@ -22,9 +8,7 @@ import winreg
 from pyvda import VirtualDesktop, get_virtual_desktops
 
 
-# ============================================================
 # STATE
-# ============================================================
 
 # The desktop the user was on before activating each personality.
 #
@@ -50,12 +34,10 @@ _previous_desktops = {}
 _profile_desktops = {}
 
 
-# ============================================================
 # DESKTOP NUMBERS
-# ============================================================
 
 def _get_desktop_number(desktop):
-    """Safely get a virtual desktop number."""
+    # Safely get a virtual desktop number
 
     if desktop is None:
         return None
@@ -80,24 +62,15 @@ def _get_desktop_number(desktop):
         return None
 
 
-# ============================================================
 # DESKTOP GUID
-# ============================================================
 
 def _get_desktop_guid(desktop):
-    """
-    Get the real Windows GUID for a virtual desktop.
-
-    pyvda does not expose this directly as a normal public
-    property, so several compatible methods are attempted.
-    """
+    # Get the real Windows GUID for a virtual desktop
 
     if desktop is None:
         return None
 
-    # --------------------------------------------------------
     # Some versions expose an id property.
-    # --------------------------------------------------------
 
     possible_attributes = (
         "id",
@@ -132,10 +105,7 @@ def _get_desktop_guid(desktop):
         except Exception:
             pass
 
-    # --------------------------------------------------------
-    # Newer/internal pyvda implementations may expose the
-    # underlying COM object.
-    # --------------------------------------------------------
+    # Newer/internal pyvda implementations may expose the underlying COM object.
 
     possible_objects = (
         "_desktop",
@@ -178,15 +148,7 @@ def _get_desktop_guid(desktop):
         except Exception:
             pass
 
-    # --------------------------------------------------------
-    # Last resort:
-    #
-    # Windows stores the virtual desktop IDs in:
-    #
-    # HKCU\...\Explorer\VirtualDesktops\VirtualDesktopIDs
-    #
-    # We match the desktop's position.
-    # --------------------------------------------------------
+    # Last resort: Windows stores the virtual desktop IDs in:
 
     number = _get_desktop_number(
         desktop
@@ -202,7 +164,7 @@ def _get_desktop_guid(desktop):
 
 
 def _normalise_guid(value):
-    """Convert a GUID-like value into a standard string."""
+    # Convert a GUID-like value into a standard string
 
     if value is None:
         return None
@@ -246,12 +208,7 @@ def _normalise_guid(value):
 
 
 def _get_all_registry_desktop_guids():
-    """
-    Read Windows' actual virtual desktop GUID list.
-
-    Windows stores the IDs in the VirtualDesktopIDs binary
-    registry value, 16 bytes per GUID.
-    """
+    # Read Windows' actual virtual desktop GUID list
 
     path = (
         r"SOFTWARE\Microsoft\Windows\CurrentVersion"
@@ -322,7 +279,7 @@ def _get_all_registry_desktop_guids():
 def _get_guid_from_registry_index(
     index
 ):
-    """Get a desktop GUID using its current Windows index."""
+    # Get a desktop GUID using its current Windows index
 
     guids = (
         _get_all_registry_desktop_guids()
@@ -340,14 +297,12 @@ def _get_guid_from_registry_index(
     ]
 
 
-# ============================================================
 # DESKTOP NAME
-# ============================================================
 
 def _get_desktop_name_from_guid(
     desktop_guid
 ):
-    """Read the real Windows desktop name from Explorer."""
+    # Read the real Windows desktop name from Explorer
 
     if not desktop_guid:
         return ""
@@ -363,9 +318,7 @@ def _get_desktop_name_from_guid(
         r"\Explorer\VirtualDesktops\Desktops"
     )
 
-    # --------------------------------------------------------
     # Normal Windows location.
-    # --------------------------------------------------------
 
     desktop_path = (
         base_path
@@ -400,9 +353,7 @@ def _get_desktop_name_from_guid(
     except Exception:
         pass
 
-    # --------------------------------------------------------
     # Windows can also have session-specific desktop data.
-    # --------------------------------------------------------
 
     try:
 
@@ -466,7 +417,7 @@ def _get_desktop_name_from_guid(
 def _get_desktop_name(
     desktop
 ):
-    """Get the actual Windows desktop name."""
+    # Get the actual Windows desktop name
 
     guid = _get_desktop_guid(
         desktop
@@ -500,12 +451,7 @@ def _set_desktop_name(
     desktop,
     desktop_name
 ):
-    """
-    Give a Windows virtual desktop its real name.
-
-    Windows 10 2004+ supports desktop names. The name is stored
-    by Explorer against the desktop GUID.
-    """
+    # Give a Windows virtual desktop its real name
 
     if desktop is None:
         return False
@@ -517,10 +463,7 @@ def _set_desktop_name(
     if not desktop_name:
         return False
 
-    # --------------------------------------------------------
-    # Windows 11: the COM rename API is the only way Explorer
-    # actually reflects a desktop name.
-    # --------------------------------------------------------
+    # Windows 11: the COM rename API is the only way Explorer actually reflects a desktop name.
 
     rename_func = getattr(
         desktop,
@@ -570,9 +513,7 @@ def _set_desktop_name(
 
         return False
 
-    # --------------------------------------------------------
     # Write the name to the Explorer desktop registry key.
-    # --------------------------------------------------------
 
     path = (
         r"SOFTWARE\Microsoft\Windows\CurrentVersion"
@@ -605,9 +546,7 @@ def _set_desktop_name(
             f"'{desktop_name}'."
         )
 
-        # ----------------------------------------------------
         # Tell Explorer that its settings changed.
-        # ----------------------------------------------------
 
         try:
 
@@ -639,19 +578,12 @@ def _set_desktop_name(
         return False
 
 
-# ============================================================
 # DESKTOP IDENTITY
-# ============================================================
 
 def _desktop_identity(
     desktop
 ):
-    """
-    Return a stable identity for a desktop.
-
-    GUID is preferred because desktop numbers change when
-    desktops are removed.
-    """
+    # Return a stable identity for a desktop
 
     if desktop is None:
         return None
@@ -685,7 +617,7 @@ def _same_desktop(
     first,
     second
 ):
-    """Determine whether two desktop objects represent the same desktop."""
+    # Determine whether two desktop objects represent the same desktop
 
     first_identity = _desktop_identity(
         first
@@ -708,19 +640,12 @@ def _same_desktop(
     )
 
 
-# ============================================================
 # DESKTOP EXISTENCE / REFRESH
-# ============================================================
 
 def _get_fresh_desktop(
     desktop
 ):
-    """
-    Get a fresh pyvda object representing the same desktop.
-
-    GUID matching is used first so deleting another desktop
-    cannot accidentally redirect the reference.
-    """
+    # Get a fresh pyvda object representing the same desktop
 
     if desktop is None:
         return None
@@ -731,9 +656,7 @@ def _get_fresh_desktop(
 
     desktops = get_all_desktops()
 
-    # --------------------------------------------------------
     # Best method: GUID.
-    # --------------------------------------------------------
 
     if wanted_guid:
 
@@ -752,9 +675,7 @@ def _get_fresh_desktop(
 
                 return existing
 
-    # --------------------------------------------------------
     # Fallback: desktop number.
-    # --------------------------------------------------------
 
     wanted_number = _get_desktop_number(
         desktop
@@ -776,12 +697,10 @@ def _get_fresh_desktop(
     return None
 
 
-# ============================================================
 # DESKTOP GETTERS
-# ============================================================
 
 def get_current_desktop():
-    """Return the currently active virtual desktop."""
+    # Return the currently active virtual desktop
 
     try:
 
@@ -798,7 +717,7 @@ def get_current_desktop():
 
 
 def get_all_desktops():
-    """Return all current virtual desktops."""
+    # Return all current virtual desktops
 
     try:
 
@@ -816,14 +735,12 @@ def get_all_desktops():
         return []
 
 
-# ============================================================
 # DESKTOP DESCRIPTION
-# ============================================================
 
 def _describe_desktop(
     desktop
 ):
-    """Return a useful desktop description."""
+    # Return a useful desktop description
 
     if desktop is None:
         return "unknown desktop"
@@ -856,12 +773,10 @@ def _describe_desktop(
     return "unknown desktop"
 
 
-# ============================================================
 # DESKTOP CREATION
-# ============================================================
 
 def _create_desktop():
-    """Create a new virtual desktop."""
+    # Create a new virtual desktop
 
     try:
 
@@ -874,10 +789,7 @@ def _create_desktop():
             "virtual desktop."
         )
 
-        # ----------------------------------------------------
-        # Refresh it immediately because Windows may have
-        # changed the desktop list.
-        # ----------------------------------------------------
+        # Refresh it immediately because Windows may have changed the desktop list.
 
         fresh_desktop = (
             _get_fresh_desktop(
@@ -901,14 +813,12 @@ def _create_desktop():
         return None
 
 
-# ============================================================
 # DESKTOP SWITCHING
-# ============================================================
 
 def switch_to_desktop(
     desktop
 ):
-    """Switch Windows to a specific virtual desktop."""
+    # Switch Windows to a specific virtual desktop
 
     if desktop is None:
         return False
@@ -949,27 +859,12 @@ def switch_to_desktop(
         return False
 
 
-# ============================================================
 # PERSONALITY DESKTOPS
-# ============================================================
 
 def switch_to_profile_desktop(
     profile_data
 ):
-    """
-    Switch to the desktop for a personality.
-
-    A new desktop is created for the personality and receives
-    its configured Windows desktop name.
-
-    Example:
-
-        target-desktop-name = "Gaming"
-
-    results in an actual Windows desktop named:
-
-        Gaming
-    """
+    # Switch to the desktop for a personality
 
     profile_name = profile_data.get(
         "name"
@@ -1011,9 +906,7 @@ def switch_to_profile_desktop(
 
         target_name = profile_name
 
-    # --------------------------------------------------------
     # If this personality already has a desktop, return to it.
-    # --------------------------------------------------------
 
     existing_info = (
         _profile_desktops.get(
@@ -1070,9 +963,7 @@ def switch_to_profile_desktop(
             f"'{profile_name}' no longer exists."
         )
 
-    # --------------------------------------------------------
     # Save the desktop the user was on.
-    # --------------------------------------------------------
 
     if profile_name not in _previous_desktops:
 
@@ -1097,9 +988,7 @@ def switch_to_profile_desktop(
                 f"{_describe_desktop(current_desktop)}."
             )
 
-    # --------------------------------------------------------
     # Create a new desktop.
-    # --------------------------------------------------------
 
     print(
         f"[Virtual Desktop] Creating desktop for "
@@ -1113,11 +1002,7 @@ def switch_to_profile_desktop(
     if new_desktop is None:
         return False
 
-    # --------------------------------------------------------
-    # IMPORTANT:
-    #
-    # Name the actual Windows desktop.
-    # --------------------------------------------------------
+    # IMPORTANT: Name the actual Windows desktop.
 
     named = _set_desktop_name(
         new_desktop,
@@ -1131,9 +1016,7 @@ def switch_to_profile_desktop(
             f"Windows desktop name to '{target_name}'."
         )
 
-    # --------------------------------------------------------
     # Refresh after naming.
-    # --------------------------------------------------------
 
     fresh_new_desktop = (
         _get_fresh_desktop(
@@ -1181,12 +1064,7 @@ def switch_to_profile_desktop(
 
 
 def get_active_personality_desktop(profile_name):
-    """
-    Return the virtual desktop a personality is currently using.
-
-    Returns None if the personality has not taken control of a
-    desktop during this session.
-    """
+    # Return the virtual desktop a personality is currently using
 
     info = (
         _profile_desktops.get(
@@ -1200,29 +1078,13 @@ def get_active_personality_desktop(profile_name):
     )
 
 
-# ============================================================
 # UPDATE REFERENCES BEFORE DELETION
-# ============================================================
 
 def _update_references_before_deleting(
     deleted_desktop,
     replacement_desktop
 ):
-    """
-    Update saved previous-desktop references before deleting
-    a desktop.
-
-    This specifically fixes:
-
-        Desktop 1
-            |
-        Gaming -> Desktop 2
-            |
-        Focus -> Desktop 3
-
-    When Gaming closes and Desktop 2 is deleted, Focus must
-    not continue holding a reference to the deleted Desktop 2.
-    """
+    # Update saved previous-desktop references before deleting
 
     deleted_guid = (
         _get_desktop_guid(
@@ -1313,15 +1175,13 @@ def _update_references_before_deleting(
             )
 
 
-# ============================================================
 # DESKTOP DELETION
-# ============================================================
 
 def _delete_desktop(
     desktop,
     fallback_desktop
 ):
-    """Delete a virtual desktop safely."""
+    # Delete a virtual desktop safely
 
     if desktop is None:
         return False
@@ -1367,9 +1227,7 @@ def _delete_desktop(
 
         return False
 
-    # --------------------------------------------------------
     # Update other personalities before deletion.
-    # --------------------------------------------------------
 
     _update_references_before_deleting(
         fresh_desktop,
@@ -1404,13 +1262,7 @@ def _delete_desktop(
             f"'{desktop_name or 'desktop'}'."
         )
 
-        # ----------------------------------------------------
-        # Remove its Explorer name entry.
-        #
-        # Windows normally cleans this up itself, but removing
-        # it here prevents stale names if Windows leaves the
-        # registry entry behind.
-        # ----------------------------------------------------
+        # Remove its Explorer name entry to avoid stale registry keys.
 
         if desktop_guid:
 
@@ -1443,19 +1295,12 @@ def _delete_desktop(
         return False
 
 
-# ============================================================
 # RESTORE PREVIOUS DESKTOP
-# ============================================================
 
 def restore_previous_desktop(
     profile_name
 ):
-    """
-    Return to the desktop that was active before the
-    personality was opened.
-
-    Only desktops created by Void Launcher are deleted.
-    """
+    # Return to the desktop that was active before the personality opened.
 
     previous_info = (
         _previous_desktops.pop(
@@ -1501,9 +1346,7 @@ def restore_previous_desktop(
             )
         )
 
-    # --------------------------------------------------------
     # Extract saved previous desktop.
-    # --------------------------------------------------------
 
     previous_desktop = None
 
@@ -1515,9 +1358,7 @@ def restore_previous_desktop(
             )
         )
 
-    # --------------------------------------------------------
     # Refresh the actual desktop objects.
-    # --------------------------------------------------------
 
     fresh_previous = (
         _get_fresh_desktop(
@@ -1531,10 +1372,7 @@ def restore_previous_desktop(
         )
     )
 
-    # --------------------------------------------------------
-    # If the previous desktop disappeared, select a safe
-    # desktop that isn't the personality desktop.
-    # --------------------------------------------------------
+    # If the previous desktop disappeared, select a safe desktop that isn't the personality desktop.
 
     if fresh_previous is None:
 
@@ -1558,9 +1396,7 @@ def restore_previous_desktop(
 
             break
 
-    # --------------------------------------------------------
     # Switch away from the personality desktop.
-    # --------------------------------------------------------
 
     switched = False
 
@@ -1583,9 +1419,7 @@ def restore_previous_desktop(
             f"was available for '{profile_name}'."
         )
 
-    # --------------------------------------------------------
     # Delete only a desktop created by Void Launcher.
-    # --------------------------------------------------------
 
     if (
         was_created

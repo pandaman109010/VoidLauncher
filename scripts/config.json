@@ -6,90 +6,37 @@
   },
   "personalities": [
     {
-      "name": "Gaming",
+      "name": "personality example",
       "enabled": true,
-      "trigger-shortcut": "ctrl+alt+g",
+      "trigger-shortcut": "ctrl+win+z",
       "apps-to-launch": {
-        "enabled": false,
-        "paths": "C:\\Program Files (x86)\\Steam\\steam.exe"
+        "enabled": true,
+        "paths": "WINWORD.EXE"
       },
       "tabs-to-open": {
         "enabled": true,
-        "urls": "https://www.google.com"
+        "urls": "voidlauncher.qd.je"
       },
       "virtual-desktop-switch": {
         "enabled": true,
-        "target-desktop-name": "Gaming"
+        "target-desktop-name": "personality example"
       },
       "system-settings-automation": {
         "enabled": true,
-        "volume-level": 32,
+        "volume-level": 6,
         "do-not-disturb": true
       },
       "wallpaper-switch": {
         "enabled": true,
-        "wallpaper-path": "C:\\Users\\r4t\\Downloads\\e71b4b2af7a4049bcfdaf9b2382cc495.png"
-      }
-    },
-    {
-      "name": "Focus Mode",
-      "enabled": true,
-      "trigger-shortcut": "ctrl+alt+f",
-      "apps-to-launch": {
-        "enabled": true,
-        "paths": "C:\\Users\\Jimmy\\AppData\\Local\\Programs\\Ente Auth\\auth.exe, C:\\Users\\Jimmy\\AppData\\Local\\Programs\\LocalSend\\localsend_app.exe, C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
-      },
-      "tabs-to-open": {
-        "enabled": true,
-        "urls": "https://github.com, https://chatgpt.com"
-      },
-      "virtual-desktop-switch": {
-        "enabled": true,
-        "target-desktop-name": "Focus"
-      },
-      "system-settings-automation": {
-        "enabled": true,
-        "volume-level": 100,
-        "do-not-disturb": true
-      },
-      "wallpaper-switch": {
-        "enabled": true,
-        "wallpaper-path": "C:\\Users\\Jimmy\\Downloads\\aidens gay.png"
-      }
-    },
-    {
-      "name": "asdf",
-      "enabled": true,
-      "trigger-shortcut": "ctrl+shift+alt+f",
-      "apps-to-launch": {
-        "enabled": true,
-        "paths": "C:\\Users\\Jimmy\\Downloads\\LocalSend-1.17.0-windows-x86-64.exe"
-      },
-      "tabs-to-open": {
-        "enabled": true,
-        "urls": "https://www.google.com, https://www.youtube.com"
-      },
-      "virtual-desktop-switch": {
-        "enabled": false,
-        "target-desktop-name": "new-desktop"
-      },
-      "system-settings-automation": {
-        "enabled": true,
-        "volume-level": 100,
-        "do-not-disturb": true
-      },
-      "wallpaper-switch": {
-        "enabled": true,
-        "wallpaper-path": "D:\\backgrounds\\interesting.jpg"
+        "wallpaper-path": "scripts\\wallpaper_example.png"
       }
     }
   ],
   "feature-ram-monitor": {
-    "enabled": true,
+    "enabled": false,
     "max-allowed-percentage": 85
   },
   "feature-smart-suggestions": {
-    "enabled": true,
-    "scan-interval-minutes": 5
+    "enabled": false
   }
 }

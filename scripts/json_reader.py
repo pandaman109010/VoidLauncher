@@ -19,7 +19,7 @@ _active_environments = set()
 
 
 def load_config():
-    """Return cached config, reading config.json only after a successful change."""
+    # Return cached config, reading config.json only after a successful change
     global _config_cache, _config_signature, _config_revision
 
     try:
@@ -48,7 +48,7 @@ def load_config():
 
 
 def get_config_revision():
-    """Return a number that increases after each successful config reload."""
+    # Return a number that increases after each successful config reload
     load_config()
     with _config_lock:
         return _config_revision
@@ -73,11 +73,7 @@ def get_personality_by_name(name):
 
 
 def get_enabled_profile_apps(name):
-    """Return enabled app launch entries for a profile.
-
-    Current settings use a comma-separated string. A JSON list is also
-    accepted so the launcher can support richer entries later.
-    """
+    # Return enabled app launch entries for a profile
     profile = get_personality_by_name(name)
     if profile is None:
         return []
@@ -96,7 +92,7 @@ def get_enabled_profile_apps(name):
     return []
 
 def get_enabled_profile_tabs(name):
-    """Return enabled website URLs for a profile."""
+    # Return enabled website URLs for a profile
     profile = get_personality_by_name(name)
 
     if profile is None:

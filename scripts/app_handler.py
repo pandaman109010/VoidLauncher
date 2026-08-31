@@ -1,4 +1,4 @@
-"""Launch and stop the exact processes created for each VoidLauncher profile."""
+# Launch and stop exactly the processes VoidLauncher opened per profile.
 
 import ctypes
 import os
@@ -14,9 +14,7 @@ import virtual_desktop
 from pyvda import AppView, VirtualDesktop
 
 
-# ============================================================
 # PROCESS TRACKING
-# ============================================================
 
 # Each entry records EXACTLY what VoidLauncher itself opened:
 #   {"kind": "process", "popen": Popen}   - an app process we started
@@ -31,12 +29,10 @@ _process_lock = RLock()
 WM_CLOSE = 0x0010
 
 
-# ============================================================
 # APPLICATION LAUNCHING
-# ============================================================
 
 def _normalise_app_entry(entry):
-    """Turn a string or JSON object into a Popen command list."""
+    # Turn a string or JSON object into a Popen command list
 
     if isinstance(entry, str):
         path = entry.strip()
@@ -87,12 +83,7 @@ def _normalise_app_entry(entry):
 
 
 def _register_tracked_process(profile_name, command, cwd=None):
-    """
-    Start a process and track it as belonging to the profile.
-
-    Only the exact process started here is tracked, so closing the
-    personality never touches other instances of the same app.
-    """
+    # Start a process and track it as belonging to the profile
 
     process = subprocess.Popen(
         command,
@@ -107,12 +98,7 @@ def _register_tracked_process(profile_name, command, cwd=None):
 
 
 def launch_profile_environment(profile_data):
-    """
-    Launch enabled apps for a profile.
-
-    Apps are launched after engine.py has already switched
-    to the personality's virtual desktop.
-    """
+    # Launch enabled apps for a profile
 
     profile_name = profile_data.get(
         "name"
@@ -235,12 +221,10 @@ def launch_profile_environment(profile_data):
         )
 
 
-# ============================================================
 # WINDOWS / PROCESS CLOSING
-# ============================================================
 
 def _get_windows_for_processes(process_ids):
-    """Return visible top-level windows belonging to any given PID."""
+    # Return visible top-level windows belonging to any given PID
 
     windows = []
 
@@ -282,7 +266,7 @@ def _get_windows_for_processes(process_ids):
 
 
 def _process_snapshot():
-    """Return a {pid: (parent_pid, executable_name)} snapshot."""
+    # Return a {pid: (parent_pid, executable_name)} snapshot
 
     kernel32 = ctypes.windll.kernel32
 
@@ -350,7 +334,7 @@ def _process_snapshot():
 
 
 def _windows_for_process(process_id):
-    """Return visible top-level windows belonging to one process."""
+    # Return visible top-level windows belonging to one process
 
     return _get_windows_for_processes(
         [process_id]
@@ -358,7 +342,7 @@ def _windows_for_process(process_id):
 
 
 def _force_kill_process(pid):
-    """Terminate a single process by PID."""
+    # Terminate a single process by PID
 
     kernel32 = ctypes.windll.kernel32
 
@@ -389,7 +373,7 @@ def _force_kill_process(pid):
 
 
 def _close_request_windows(process_ids):
-    """Ask every visible window of the PIDs to close normally."""
+    # Ask every visible window of the PIDs to close normally
 
     user32 = ctypes.windll.user32
 
@@ -410,7 +394,7 @@ def _close_request_windows(process_ids):
 
 
 def _request_process_close(process):
-    """Ask all visible windows of a process to close normally."""
+    # Ask all visible windows of a process to close normally
 
     process_id = process.pid
 
@@ -436,14 +420,7 @@ def _request_process_close(process):
 
 
 def _close_process_normally(process):
-    """
-    Ask a process to close normally and wait for it to exit.
-
-    This is exactly what pressing the X on its windows does, so
-    applications such as Word can show their normal save prompt.
-    A process that refuses to close is left alone - it is never
-    force-killed or crashed out.
-    """
+    # Ask a process to close normally and wait for it to exit
 
     if process.poll() is not None:
         return True
@@ -485,12 +462,7 @@ def _close_process_normally(process):
 
 
 def _close_tracked_window(window_id):
-    """
-    Close a browser window VoidLauncher itself opened.
-
-    Only that exact window gets a WM_CLOSE, so windows the user
-    already had open in the same browser are left alone.
-    """
+    # Close a browser window VoidLauncher itself opened
 
     user32 = ctypes.windll.user32
 
@@ -528,9 +500,7 @@ def _close_tracked_window(window_id):
 
 
 def _close_tracked_entry(entry):
-    """
-    Close exactly one thing VoidLauncher opened for a profile.
-    """
+    # Close exactly one thing VoidLauncher opened for a profile
 
     if entry["kind"] == "process":
 
@@ -562,14 +532,7 @@ def _close_tracked_entry(entry):
 
 
 def close_profile_environment(profile_data):
-    """
-    Close only things this profile actually opened.
-
-    Exactly like the original design: each process and browser
-    window gets a normal window close (the X button). Anything that
-    refuses to close is left alone so it can show a save prompt -
-    it is never force-killed.
-    """
+    # Close only things this profile actually opened
 
     profile_name = profile_data.get(
         "name"
@@ -640,13 +603,7 @@ def close_profile_environment(profile_data):
 
 
 def close_processes_by_name(image_name):
-    """
-    Close every process with the given executable name.
-
-    Only used for an explicit user request, such as closing the
-    settings window when Void Launcher exits - never for apps an
-    active personality started.
-    """
+    # Close every process with the given executable name
 
     image_name = (
         Path(
@@ -696,17 +653,10 @@ def close_processes_by_name(image_name):
     return True
 
 
-# ============================================================
 # BROWSER DETECTION
-# ============================================================
 
 def _get_default_browser_path():
-    """
-    Resolve the Windows default web browser executable.
-
-    Reads the http UserChoice ProgId, then the ProgId's shell
-    open command, and extracts the executable path.
-    """
+    # Resolve the Windows default web browser executable
 
     try:
 
@@ -779,12 +729,7 @@ def _get_default_browser_path():
 
 
 def _find_browser():
-    """
-    Find a browser executable.
-
-    The Windows default browser is preferred. Otherwise Chrome is
-    preferred, then Edge, then Firefox, then other Chromium forks.
-    """
+    # Find a browser executable
 
     default_browser = _get_default_browser_path()
 
@@ -826,11 +771,7 @@ def _find_browser():
 
 
 def _get_browser_windows():
-    """
-    Find visible browser windows.
-
-    Returns a list of HWNDs.
-    """
+    # Find visible browser windows
 
     browsers = {
         "chrome.exe",
@@ -929,18 +870,10 @@ def _get_browser_windows():
     return windows
 
 
-# ============================================================
 # BROWSER WINDOW MOVING
-# ============================================================
 
 def _move_browser_window_to_profile_desktop(profile_name, hwnd):
-    """
-    Move a browser window onto the personality's virtual desktop.
-
-    The personality desktop is used directly (not the currently
-    active one) so a browser that opens on Desktop One cannot
-    trick the launcher into confirming it there.
-    """
+    # Move a browser window onto the personality's virtual desktop
 
     try:
 
@@ -990,13 +923,7 @@ def _move_browser_window_to_profile_desktop(profile_name, hwnd):
 
 
 def _open_first_browser_window(profile_name, url):
-    """
-    Create one new browser window containing the first URL.
-
-    The window is then moved onto the personality desktop and the
-    exact window is tracked, so closing the personality only closes
-    the window that was opened here.
-    """
+    # Create one new browser window containing the first URL
 
     browser = _find_browser()
 
@@ -1150,11 +1077,7 @@ def _open_first_browser_window(profile_name, url):
 
 
 def _open_browser_tab(browser, url):
-    """
-    Open a URL as a new tab in the existing browser.
-
-    This intentionally does NOT use --new-window.
-    """
+    # Open a URL as a new tab in the existing browser
 
     try:
 
@@ -1184,12 +1107,7 @@ def _open_browser_tab(browser, url):
 
 
 def _reassert_profile_desktop(profile_name):
-    """
-    Put focus back onto the personality's virtual desktop.
-
-    Browsers like Edge and Chrome can yank the visible desktop
-    when they open, so switch back to the personality desktop.
-    """
+    # Put focus back onto the personality's virtual desktop
 
     profile = (
         json_reader.get_personality_by_name(
@@ -1211,21 +1129,10 @@ def _reassert_profile_desktop(profile_name):
     )
 
 
-# ============================================================
 # PROFILE TABS
-# ============================================================
 
 def open_profile_tabs(profile_name):
-    """
-    Open all websites configured for a profile.
-
-    IMPORTANT:
-
-    - First URL creates ONE new browser window.
-    - Remaining URLs become tabs in that window.
-    - The browser window is moved to the currently
-      active personality desktop.
-    """
+    # Open all websites configured for a profile
 
     urls = (
         json_reader.get_enabled_profile_tabs(
@@ -1253,9 +1160,7 @@ def open_profile_tabs(profile_name):
 
         return
 
-    # --------------------------------------------------------
     # FIRST URL
-    # --------------------------------------------------------
 
     first_url = urls[0]
 
@@ -1269,9 +1174,7 @@ def open_profile_tabs(profile_name):
     if browser_window is None:
         return
 
-    # --------------------------------------------------------
     # REMAINING URLS
-    # --------------------------------------------------------
 
     for url in urls[1:]:
 
